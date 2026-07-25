@@ -1,0 +1,2220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Monta Times</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto+Mono:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --court-navy:#0E2A3D;
+    --court-navy-light:#153a52;
+    --sand:#EFF1EA;
+    --card:#FFFFFF;
+    --line:#DADED2;
+    --line-strong:#C3C9B8;
+    --ink:#12202A;
+    --ink-soft:#5B6A6E;
+    --ink-faint:#94A0A0;
+    --gold:#E3A237;
+    --gold-dark:#8C5F16;
+    --gold-bg:#FBEDD3;
+    --green:#3E8F63;
+    --green-dark:#1F5C3D;
+    --green-bg:#DEEEE2;
+    --coral:#D9614A;
+    --coral-dark:#8F2E1D;
+    --coral-bg:#F8DFD8;
+    --blue:#3B7DD8;
+    --blue-dark:#1F4C8C;
+    --blue-bg:#DCE7F9;
+    --radius:14px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--sand);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    min-height:100vh;
+    padding-bottom:84px;
+  }
+  .display{font-family:'Bebas Neue',sans-serif; letter-spacing:0.03em;}
+  .mono{font-family:'Roboto Mono',monospace;}
+
+  header.appbar{
+    background:var(--court-navy);
+    color:#fff;
+    padding:22px 20px 18px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.appbar::after{
+    content:"";
+    position:absolute; left:0; right:0; bottom:0;
+    height:6px;
+    background-image:repeating-linear-gradient(90deg,var(--gold) 0 14px, transparent 14px 26px);
+    opacity:0.9;
+  }
+  .appbar-title{
+    font-size:30px;
+    line-height:1;
+    margin:0;
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+  }
+  .appbar-title small{
+    font-family:'Inter',sans-serif;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.12em;
+    color:var(--gold);
+    text-transform:uppercase;
+  }
+  .version-badge{
+    font-family:'Roboto Mono',monospace;
+    font-size:10px;
+    font-weight:700;
+    color:#7E93A0;
+    letter-spacing:0.02em;
+  }
+  .appbar-sub{
+    margin:4px 0 0;
+    font-size:12.5px;
+    color:#B9C6CE;
+  }
+
+  nav.tabs{
+    display:flex;
+    background:var(--court-navy-light);
+    padding:0 8px;
+  }
+  nav.tabs button{
+    flex:1;
+    background:none;
+    border:none;
+    color:#9FB2BC;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:12.5px;
+    letter-spacing:0.01em;
+    padding:13px 2px 11px;
+    border-bottom:3px solid transparent;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+  }
+  nav.tabs button.active{
+    color:#fff;
+    border-bottom:3px solid var(--gold);
+  }
+  .lock-ico{font-size:11px;}
+
+  main{padding:14px 16px 8px; max-width:520px; margin:0 auto;}
+  .view{display:none;}
+  .view.active{display:block;}
+
+  nav.subtabs{
+    display:flex;
+    gap:6px;
+    margin:2px 0 12px;
+    border-bottom:1px solid var(--line);
+  }
+  nav.subtabs button{
+    flex:1;
+    background:none;
+    border:none;
+    color:var(--ink-soft);
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    padding:8px 4px;
+    border-bottom:3px solid transparent;
+    cursor:pointer;
+  }
+  nav.subtabs button.active{
+    color:var(--court-navy);
+    border-bottom:3px solid var(--gold);
+  }
+  .subview{display:none;}
+  .subview.active{display:block;}
+
+  .section-label{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    margin:14px 2px 8px;
+  }
+  .section-label:first-child{margin-top:4px;}
+
+  /* ---- Elenco / roster ---- */
+  .search-row{
+    display:flex; gap:8px; margin-bottom:4px;
+  }
+  input[type=text], input[type=number], input[type=password], select{
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    padding:8px 10px;
+    border-radius:10px;
+    border:1px solid var(--line-strong);
+    background:#fff;
+    color:var(--ink);
+    width:100%;
+  }
+  input:focus, select:focus{outline:2px solid var(--gold); outline-offset:1px;}
+
+  .roster-count{
+    font-size:12px; color:var(--ink-soft); margin:6px 2px 3px;
+  }
+
+  .player-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    margin-bottom:5px;
+    overflow:hidden;
+  }
+  .player-card .player-row{
+    background:none;
+    border:none;
+    margin-bottom:0;
+    border-radius:0;
+  }
+  .expand-btn{
+    background:none;
+    border:none;
+    color:var(--ink-faint);
+    font-size:13px;
+    width:16px;
+    min-width:16px;
+    cursor:pointer;
+    padding:0;
+  }
+  .pos-nota-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:6px;
+    padding:0 10px 9px 32px;
+  }
+  .pos-nota{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+  .pos-nota label{
+    font-family:'Roboto Mono',monospace;
+    font-size:10px;
+    font-weight:700;
+    color:var(--gold-dark);
+  }
+  .pos-nota input{
+    padding:4px 3px;
+    text-align:center;
+    font-family:'Roboto Mono',monospace;
+    font-size:12px;
+  }
+  .player-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:7px 10px;
+    margin-bottom:5px;
+  }
+  .jersey{
+    width:30px; height:30px; min-width:30px;
+    border-radius:50%;
+    background:var(--court-navy);
+    color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Roboto Mono',monospace;
+    font-weight:700;
+    font-size:10.5px;
+  }
+  .player-name{
+    flex:1;
+    font-weight:600;
+    font-size:13.5px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .player-row input[type=number]{
+    width:62px;
+    text-align:center;
+    font-family:'Roboto Mono',monospace;
+    padding:6px 3px;
+  }
+  .icon-btn{
+    background:none;
+    border:none;
+    color:var(--coral-dark);
+    font-size:16px;
+    cursor:pointer;
+    padding:3px 2px;
+    line-height:1;
+  }
+
+  .add-card{
+    background:var(--card);
+    border:1px dashed var(--line-strong);
+    border-radius:12px;
+    padding:11px;
+    margin-top:10px;
+  }
+  .add-card .row{display:flex; gap:8px; margin-bottom:8px;}
+  .add-card input[type=number]{width:90px; text-align:center; font-family:'Roboto Mono',monospace;}
+  button.primary{
+    background:var(--court-navy);
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    padding:11px 16px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+    width:100%;
+  }
+  button.primary:active{opacity:0.85;}
+  button.ghost{
+    background:none;
+    border:1px solid var(--line-strong);
+    color:var(--ink);
+    border-radius:10px;
+    padding:9px 14px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    cursor:pointer;
+  }
+  .hint{font-size:11.5px; color:var(--ink-faint); margin:6px 2px 0;}
+  .file-label{
+    display:block;
+    text-align:center;
+    border:1px solid var(--line-strong);
+    border-radius:10px;
+    padding:10px;
+    font-size:13px;
+    font-weight:600;
+    color:var(--court-navy);
+    cursor:pointer;
+    background:#fff;
+  }
+  .file-label input{display:none;}
+
+  /* ---- lock screen ---- */
+  .lock-screen{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px 20px;
+    text-align:center;
+    margin-top:10px;
+  }
+  .lock-screen .lock-big{font-size:32px; margin-bottom:6px;}
+  .lock-screen h3{margin:6px 0 4px; font-size:17px;}
+  .lock-screen p{margin:0 0 16px; font-size:13px; color:var(--ink-soft);}
+  .lock-screen input{margin-bottom:10px; text-align:center;}
+  .login-status{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    background:var(--green-bg);
+    color:var(--green-dark);
+    font-size:12px;
+    font-weight:600;
+    padding:8px 12px;
+    border-radius:10px;
+    margin-bottom:10px;
+  }
+  .login-dot{
+    width:7px; height:7px;
+    min-width:7px;
+    border-radius:50%;
+    background:var(--green);
+  }
+  #diagResult{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px 12px;
+    margin-bottom:10px;
+    font-size:12.5px;
+    line-height:1.6;
+  }
+  #diagResult .diag-line{display:flex; align-items:center; gap:7px;}
+  #diagResult .diag-ok{color:var(--green-dark); font-weight:700;}
+  #diagResult .diag-fail{color:var(--coral-dark); font-weight:700;}
+  .top-actions{display:flex; justify-content:flex-end; gap:8px; margin-bottom:6px;}
+  .link-btn{
+    background:none; border:none; color:var(--ink-soft);
+    font-size:12px; text-decoration:underline; cursor:pointer; padding:4px;
+  }
+
+  /* ---- Convocados ---- */
+  .conv-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:7px 9px;
+    margin-bottom:5px;
+  }
+  .conv-card-top{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:6px;
+  }
+  .conv-card-top input[type=checkbox]{
+    width:18px; height:18px; accent-color:var(--court-navy); min-width:18px;
+  }
+  .tag-count{
+    font-family:'Roboto Mono',monospace;
+    font-size:10.5px;
+    color:var(--ink-faint);
+    min-width:28px;
+    text-align:right;
+  }
+  .conv-chip-row{
+    display:grid;
+    grid-template-columns:repeat(6, 1fr);
+    gap:4px;
+  }
+  .conv-chip{
+    position:relative;
+    background:var(--sand);
+    border:1.5px solid var(--line-strong);
+    border-radius:7px;
+    text-align:center;
+    padding:5px 2px;
+    font-family:'Roboto Mono',monospace;
+    font-weight:700;
+    font-size:10.5px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    user-select:none;
+  }
+  .conv-chip.on{
+    background:var(--gold);
+    border-color:var(--gold);
+    color:var(--court-navy);
+  }
+  .conv-chip .rank-badge{
+    position:absolute;
+    top:-6px; right:-4px;
+    width:15px; height:15px;
+    border-radius:50%;
+    background:var(--court-navy);
+    color:#fff;
+    font-size:9px;
+    font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+    line-height:1;
+  }
+  .conv-chip.disabled{
+    opacity:0.4;
+    pointer-events:none;
+  }
+  .conv-actions{display:flex; gap:8px; margin:10px 0 4px;}
+  .conv-actions button{flex:1;}
+  .pos-choice-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:8px;
+  }
+  .pos-choice{
+    background:var(--card);
+    border:1.5px solid var(--line-strong);
+    border-radius:10px;
+    text-align:center;
+    padding:12px 4px;
+    font-family:'Roboto Mono',monospace;
+    font-weight:700;
+    font-size:14px;
+    color:var(--ink-soft);
+    cursor:pointer;
+    user-select:none;
+  }
+  .pos-choice.on{
+    background:var(--court-navy);
+    border-color:var(--court-navy);
+    color:#fff;
+  }
+  #defResultList{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:5px 6px;
+  }
+  .def-result-row{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:9px;
+    padding:5px 6px;
+    min-width:0;
+  }
+  .def-result-row .jersey{
+    width:26px; height:26px; min-width:26px;
+    font-size:9.5px;
+  }
+  .def-name-block{
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:1px;
+  }
+  .def-result-row .player-name{
+    font-size:11.5px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .def-prefs{
+    font-family:'Roboto Mono',monospace;
+    font-size:8.5px;
+    color:var(--ink-faint);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .def-result-row select{
+    width:64px;
+    min-width:0;
+    padding:4px 2px;
+    font-size:10px;
+  }
+  .pos-summary{
+    display:grid;
+    grid-template-columns:repeat(6, 1fr);
+    gap:5px;
+    margin:8px 0 10px;
+  }
+  .pos-pill{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:9px;
+    text-align:center;
+    padding:4px 2px;
+  }
+  .pos-pill .p-name{
+    font-family:'Roboto Mono',monospace;
+    font-weight:700;
+    font-size:11px;
+    color:var(--gold-dark);
+  }
+  .pos-pill .p-count{
+    font-size:10.5px;
+    color:var(--ink-faint);
+    margin-top:1px;
+  }
+  .pos-pill.empty .p-count{color:var(--coral-dark); font-weight:600;}
+  .jersey.pos-set{background:var(--gold); color:var(--court-navy);}
+
+  /* ---- Times / teams ---- */
+  .balance-summary{
+    display:flex;
+    gap:8px;
+    margin-bottom:18px;
+  }
+  .metric{
+    flex:1;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:10px 8px;
+    text-align:center;
+  }
+  .metric .val{
+    font-family:'Roboto Mono',monospace;
+    font-weight:700;
+    font-size:16px;
+  }
+  .metric .lab{
+    font-size:10px;
+    color:var(--ink-faint);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    margin-top:2px;
+  }
+
+  #teamsContainer{
+    display:flex;
+    gap:6px;
+  }
+  .team-card{
+    flex:1;
+    min-width:0;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+  }
+  .team-head{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:5px;
+    padding:10px 3px 8px;
+    background:var(--court-navy);
+    color:#fff;
+  }
+  .team-letter-circle{
+    width:34px; height:34px;
+    border-radius:50%;
+    background:var(--gold);
+    color:var(--court-navy);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Bebas Neue',sans-serif;
+    font-size:18px;
+    letter-spacing:0.02em;
+  }
+  .badge{
+    font-size:8.5px;
+    font-weight:700;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    padding:2px 6px;
+    border-radius:20px;
+    white-space:nowrap;
+  }
+  .badge.eq{background:var(--green-bg); color:var(--green-dark);}
+  .badge.des{background:var(--coral-bg); color:var(--coral-dark);}
+  .badge.pend{background:rgba(255,255,255,0.15); color:#fff;}
+
+  .pos-row{
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+    padding:6px 5px;
+    border-top:1px dashed var(--line);
+  }
+  .pos-tag{
+    font-family:'Roboto Mono',monospace;
+    font-weight:700;
+    font-size:9.5px;
+    color:var(--blue-dark);
+    background:var(--blue-bg);
+    text-align:center;
+    padding:2px 0;
+    border-radius:5px;
+  }
+  .pos-row select{
+    width:100%;
+    padding:5px 2px;
+    font-size:10.5px;
+    text-overflow:ellipsis;
+  }
+  .team-foot{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:1px;
+    padding:7px 4px;
+    border-top:1px solid var(--line);
+    background:#FBFBF8;
+  }
+  .team-foot .total-lab{
+    font-size:8.5px; color:var(--ink-faint);
+  }
+  .team-foot .total{
+    font-family:'Roboto Mono',monospace;
+    font-weight:700;
+    font-size:13px;
+    color:var(--court-navy);
+  }
+  .team-foot .badge-mini{
+    font-size:10.5px; font-weight:700; color:var(--ink-faint);
+  }
+
+  .actions-row{
+    display:flex; gap:8px; margin:6px 0 26px;
+  }
+  .actions-row button{flex:1;}
+
+  .empty{
+    text-align:center;
+    color:var(--ink-faint);
+    font-size:13px;
+    padding:30px 10px;
+  }
+  .callout{
+    background:var(--gold-bg);
+    color:var(--gold-dark);
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:16px;
+  }
+
+  .bottomnav{
+    position:fixed; left:0; right:0; bottom:0;
+    background:var(--card);
+    border-top:1px solid var(--line);
+    display:flex;
+    padding:6px 10px calc(6px + env(safe-area-inset-bottom));
+    max-width:520px;
+    margin:0 auto;
+  }
+  .bottomnav button{
+    flex:1;
+    background:none;
+    border:none;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:2px;
+    padding:8px 4px;
+    color:var(--ink-faint);
+    font-family:'Inter',sans-serif;
+    font-size:11px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .bottomnav button.active{color:var(--court-navy);}
+  .bottomnav .dot{
+    width:6px; height:6px; border-radius:50%;
+    background:var(--gold);
+    opacity:0;
+  }
+  .bottomnav button.active .dot{opacity:1;}
+
+  .toast{
+    position:fixed;
+    left:50%; bottom:96px;
+    transform:translateX(-50%) translateY(10px);
+    background:var(--court-navy);
+    color:#fff;
+    font-size:13px;
+    font-weight:600;
+    padding:10px 18px;
+    border-radius:30px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.2s, transform 0.2s;
+    z-index:50;
+    max-width:86%;
+    text-align:center;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  .modal-overlay{
+    position:fixed; inset:0;
+    background:rgba(14,42,61,0.55);
+    display:flex; align-items:center; justify-content:center;
+    padding:20px;
+    z-index:100;
+  }
+  .modal-box{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:22px 20px;
+    max-width:340px;
+    width:100%;
+  }
+  .modal-message{
+    margin:0 0 14px;
+    font-size:14px;
+    color:var(--ink);
+    line-height:1.4;
+    white-space:pre-line;
+  }
+  .modal-box input[type=text]{
+    margin-bottom:14px;
+  }
+  .modal-actions{
+    display:flex;
+    gap:8px;
+  }
+  .modal-actions button{flex:1;}
+</style>
+</head>
+<body>
+
+<header class="appbar">
+  <p class="appbar-title display">MONTA TIMES <small>vôlei</small> <span class="version-badge" id="versionBadge"></span></p>
+  <p class="appbar-sub" id="headerSub">Carregando elenco...</p>
+</header>
+<nav class="tabs">
+  <button id="tabDbBtn">Banco de dados <span class="lock-ico" id="tabLockIco"></span></button>
+  <button id="tabDefBtn">Definição de posições</button>
+  <button id="tabTimesBtn" class="active">Montar times</button>
+</nav>
+
+<main>
+
+  <section class="view" id="viewDb">
+
+    <div id="dbLocked" style="display:none;">
+      <div class="lock-screen">
+        <div class="lock-big">🔒</div>
+        <h3 id="lockTitle">Área restrita</h3>
+        <p id="lockDesc">Só pessoas autorizadas acessam o elenco, os índices e os convocados.</p>
+        <input type="password" id="pinInput" placeholder="Senha de acesso" inputmode="numeric">
+        <button class="primary" id="pinSubmitBtn">Entrar</button>
+      </div>
+    </div>
+
+    <div id="dbContent" style="display:none;">
+      <div class="login-status">
+        <span class="login-dot"></span> Você está logado — acesso liberado
+      </div>
+      <div class="top-actions">
+        <button class="link-btn" id="diagBtn">🔧 Testar conexão</button>
+        <button class="link-btn" id="saveBtnDb">☁ Salvar</button>
+        <button class="link-btn" id="changePinBtn">Trocar senha</button>
+        <button class="link-btn" id="lockBtn">Bloquear</button>
+      </div>
+      <div id="diagResult" style="display:none;"></div>
+
+      <nav class="subtabs">
+        <button id="subElencoBtn" class="active">Elenco</button>
+        <button id="subConvBtn">Convocados</button>
+      </nav>
+
+      <div class="subview active" id="subViewElenco">
+        <p class="section-label" style="margin-top:0;">Buscar</p>
+        <div class="search-row">
+          <input type="text" id="searchInput" placeholder="Nome do jogador">
+        </div>
+        <p class="roster-count" id="rosterCount"></p>
+        <div id="rosterList"></div>
+
+        <div class="add-card">
+          <p class="section-label" style="margin-top:0;">Adicionar jogador</p>
+          <div class="row">
+            <input type="text" id="newName" placeholder="Nome">
+            <input type="number" id="newIndex" placeholder="Índice" step="0.01">
+          </div>
+          <button class="primary" id="addPlayerBtn">Adicionar ao elenco</button>
+        </div>
+
+        <div class="add-card">
+          <p class="section-label" style="margin-top:0;">Importar tabela</p>
+          <label class="file-label">
+            Escolher arquivo (.csv, .xlsx)
+            <input type="file" id="importFile" accept=".csv,.xlsx,.xls">
+          </label>
+          <p class="hint">Aceita planilha simples (colunas "nome" e "indice") ou o formato com notas por posição (CE, LE, LI, OP, P1, P2, GERAL). Jogadores existentes são atualizados pelo nome; novos são adicionados.</p>
+        </div>
+      </div>
+
+      <div class="subview" id="subViewConv">
+        <p class="section-label" style="margin-top:0;">Convocados para hoje</p>
+        <p class="roster-count" id="convCount"></p>
+        <div class="conv-actions">
+          <button class="ghost" id="convAllBtn">Convocar todos</button>
+          <button class="ghost" id="convNoneBtn">Remover todos</button>
+        </div>
+        <div class="pos-summary" id="posSummary"></div>
+        <p class="hint" style="margin:0 0 12px;">Toque nas posições na ordem de preferência (1ª, 2ª, 3ª...). O número no canto do chip mostra a ordem escolhida; toque de novo para remover.</p>
+        <div id="convList"></div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="view" id="viewDef">
+    <p class="section-label" style="margin-top:0;">Definição de posições</p>
+    <p class="hint" id="defConvInfo" style="margin:0 0 12px;"></p>
+
+    <button class="primary" id="autoDefineBtn">Definir posições pela melhor nota</button>
+    <button class="ghost" id="clearFinalPositionsBtn" style="width:100%; margin-top:8px;">Limpar posições</button>
+    <p class="hint" style="margin-top:8px;">Cada convocado tenta primeiro a sua 1ª opção marcada em Convocados; só passa pra 2ª, 3ª... se não conseguir vaga na anterior. Quando duas pessoas disputam a mesma posição na mesma preferência (até 3 vagas), quem tem a maior nota naquela posição leva a vaga; sem nota cadastrada, o desempate é pela nota geral.</p>
+
+    <p class="section-label" id="defResultLabel" style="display:none;">Posição de cada convocado</p>
+    <p class="hint" id="defResultHint" style="display:none; margin:-8px 0 10px;">A posição de cada um pode ser ajustada manualmente aqui a qualquer momento.</p>
+    <div id="defResultList"></div>
+  </section>
+
+  <section class="view active" id="viewTimes">
+    <div class="balance-summary">
+      <div class="metric"><div class="val" id="mMedia">--</div><div class="lab">Média</div></div>
+      <div class="metric"><div class="val" id="mMin">--</div><div class="lab">Mínimo</div></div>
+      <div class="metric"><div class="val" id="mMax">--</div><div class="lab">Máximo</div></div>
+    </div>
+
+    <div id="timesEmptyState"></div>
+    <div id="teamsContainer"></div>
+
+    <div class="actions-row">
+      <button class="ghost" id="autoBalanceBtn">Sortear automático</button>
+      <button class="ghost" id="clearTeamsBtn">Limpar times</button>
+    </div>
+  </section>
+
+</main>
+
+<div class="bottomnav">
+  <button id="navDb"><span class="dot"></span>Dados</button>
+  <button id="navDef"><span class="dot"></span>Definição</button>
+  <button id="navTimes" class="active"><span class="dot"></span>Times</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal-overlay" id="modalOverlay" style="display:none;">
+  <div class="modal-box">
+    <p class="modal-message" id="modalMessage"></p>
+    <input type="text" id="modalInput" style="display:none;">
+    <div class="modal-actions">
+      <button class="ghost" id="modalCancelBtn">Cancelar</button>
+      <button class="primary" id="modalConfirmBtn">OK</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const POSITIONS = ["LE","P1","P2","OP","CE","LI"];
+const TEAM_LABELS = ["Time A","Time B","Time C"];
+const APP_VERSION = "3.4";
+const DEFAULT_ACCESS_PIN = "times2026";
+const MASTER_RECOVERY_PIN = "recovery2026";
+const DEFAULT_ROSTER = [{"name": "CONVIDADO", "geral": 1, "pos": {"CE": null, "LE": null, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "RUPERT", "geral": 0.976, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": 0, "P1": 0, "P2": 1.447}}, {"name": "PAULO MATEUS", "geral": 1.748, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": null}}, {"name": "MATEUS", "geral": 1.222, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 0}}, {"name": "ANDRE", "geral": 2.816, "pos": {"CE": 0, "LE": 0, "LI": 0, "OP": null, "P1": 0, "P2": 0}}, {"name": "FERNANDO", "geral": 0.984, "pos": {"CE": 0, "LE": 0, "LI": null, "OP": 0.913, "P1": null, "P2": null}}, {"name": "ANDREY", "geral": 2.484, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 2.812}}, {"name": "HOLANDA", "geral": 1.719, "pos": {"CE": 0, "LE": 1.75, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "FELIPE", "geral": 2.099, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 0, "P1": 2.225, "P2": 2.036}}, {"name": "JOAO PEDRO", "geral": 2.012, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 2.284, "P2": 0}}, {"name": "JOAO ALVES", "geral": 2.184, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": 0, "P1": 2.63, "P2": 1.54}}, {"name": "LAERT", "geral": 1.44, "pos": {"CE": 0, "LE": 1.851, "LI": null, "OP": null, "P1": 0, "P2": 0}}, {"name": "REINALDO", "geral": 1.572, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 1.341, "P1": null, "P2": 0}}, {"name": "CARLOS", "geral": 1.833, "pos": {"CE": 0, "LE": null, "LI": 1.851, "OP": null, "P1": null, "P2": null}}, {"name": "TIMOTEO", "geral": 1.194, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "JAO", "geral": -1.667, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 0, "P1": null, "P2": null}}, {"name": "DANIEL", "geral": 2.144, "pos": {"CE": 0, "LE": 0, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "PATRICK", "geral": 1.566, "pos": {"CE": 0, "LE": 1.229, "LI": 0, "OP": 0, "P1": 2.278, "P2": 2.053}}, {"name": "BINHA", "geral": 2.355, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 0, "P1": 2.723, "P2": 2.234}}, {"name": "KAUA", "geral": 1.142, "pos": {"CE": 0, "LE": 0, "LI": 0, "OP": null, "P1": 0, "P2": null}}, {"name": "HIGOR", "geral": 1.738, "pos": {"CE": 0, "LE": 0, "LI": 0, "OP": 1.088, "P1": 2.058, "P2": 1.671}}, {"name": "GUSTAVO", "geral": 2.003, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": 0, "P1": 0, "P2": 1.896}}, {"name": "MARCOS", "geral": 0.865, "pos": {"CE": 1.022, "LE": null, "LI": null, "OP": 0.569, "P1": null, "P2": null}}, {"name": "ADALTON", "geral": 2.125, "pos": {"CE": 1.092, "LE": null, "LI": null, "OP": 1.569, "P1": 2.57, "P2": 2.516}}, {"name": "FELIPE ROCHA", "geral": 1.261, "pos": {"CE": 1.267, "LE": null, "LI": 0, "OP": 1.236, "P1": 0, "P2": 0}}, {"name": "THIAGO", "geral": 1.496, "pos": {"CE": 1.667, "LE": 1.362, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "JORGE", "geral": 1.621, "pos": {"CE": 1.788, "LE": 1.331, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "GABRIEL", "geral": 1.751, "pos": {"CE": 1.942, "LE": 0, "LI": 1.203, "OP": 0, "P1": 0, "P2": 0}}, {"name": "RIAN", "geral": 3.86, "pos": {"CE": 3.86, "LE": null, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "WEUDESON", "geral": 1.746, "pos": {"CE": null, "LE": 0, "LI": 1.763, "OP": null, "P1": 0, "P2": 0}}, {"name": "DUARTE", "geral": 2.021, "pos": {"CE": null, "LE": 0, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "RANGEL", "geral": 1.782, "pos": {"CE": null, "LE": 0, "LI": 1.606, "OP": null, "P1": null, "P2": 0}}, {"name": "JOAO VITOR", "geral": 1.079, "pos": {"CE": null, "LE": 1.575, "LI": null, "OP": 0, "P1": null, "P2": 0}}, {"name": "SALGADO", "geral": 1.908, "pos": {"CE": null, "LE": 1.97, "LI": 0, "OP": null, "P1": 0, "P2": 0}}, {"name": "HENRIQUE", "geral": 0.651, "pos": {"CE": null, "LE": null, "LI": 0, "OP": 0.555, "P1": null, "P2": null}}, {"name": "IUKI", "geral": 0.549, "pos": {"CE": null, "LE": null, "LI": 0, "OP": 0, "P1": 0, "P2": null}}, {"name": "LUIZ FERNANDO", "geral": 1.491, "pos": {"CE": null, "LE": null, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "GARAY", "geral": 1.593, "pos": {"CE": null, "LE": null, "LI": 1.671, "OP": 0, "P1": null, "P2": 0}}, {"name": "WELTON", "geral": -0.125, "pos": {"CE": null, "LE": null, "LI": null, "OP": 0, "P1": null, "P2": null}}, {"name": "ADENILSON", "geral": 1.491, "pos": {"CE": null, "LE": null, "LI": null, "OP": 1.364, "P1": 0, "P2": 0}}, {"name": "VINY", "geral": 2.433, "pos": {"CE": null, "LE": null, "LI": null, "OP": 2.304, "P1": 0, "P2": 0}}, {"name": "LUIZ FELIPE", "geral": 2.362, "pos": {"CE": null, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 0}}, {"name": "PEDRO", "geral": 2.743, "pos": {"CE": null, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 0}}];
+
+let roster = [];
+let selected = [];
+let positions = {};
+let finalPositions = {};
+let teams = emptyTeams();
+let unlocked = false;
+const POSITION_OPTIONS = ["LE","P1","P2","OP","CE","LI"];
+const MAX_PER_POSITION = 3;
+
+function emptyTeams(){
+  return [
+    {LE:null,P1:null,P2:null,OP:null,CE:null,LI:null},
+    {LE:null,P1:null,P2:null,OP:null,CE:null,LI:null},
+    {LE:null,P1:null,P2:null,OP:null,CE:null,LI:null}
+  ];
+}
+
+function uid(){ return 'p_' + Math.random().toString(36).slice(2,9); }
+
+function emptyPos(){
+  return {CE:null, LE:null, LI:null, OP:null, P1:null, P2:null};
+}
+function getPos(p){
+  return p && p.pos ? {...emptyPos(), ...p.pos} : emptyPos();
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._h);
+  showToast._h = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+/* Custom modal replacing window.confirm/prompt: some sandboxed viewers
+   (e.g. published artifact links opened by people other than the owner)
+   silently block native browser dialogs, which makes every confirm()-gated
+   button look broken. This modal has no such dependency. */
+function showConfirm(message){
+  return new Promise(resolve=>{
+    const overlay = document.getElementById('modalOverlay');
+    const input = document.getElementById('modalInput');
+    const cancelBtn = document.getElementById('modalCancelBtn');
+    const confirmBtn = document.getElementById('modalConfirmBtn');
+    document.getElementById('modalMessage').textContent = message;
+    input.style.display = 'none';
+    cancelBtn.style.display = 'inline-block';
+    confirmBtn.textContent = 'Confirmar';
+    overlay.style.display = 'flex';
+
+    const cleanup = (result)=>{
+      overlay.style.display = 'none';
+      confirmBtn.removeEventListener('click', onConfirm);
+      cancelBtn.removeEventListener('click', onCancel);
+      resolve(result);
+    };
+    const onConfirm = ()=> cleanup(true);
+    const onCancel = ()=> cleanup(false);
+    confirmBtn.addEventListener('click', onConfirm);
+    cancelBtn.addEventListener('click', onCancel);
+  });
+}
+
+function showPrompt(message, opts={}){
+  return new Promise(resolve=>{
+    const overlay = document.getElementById('modalOverlay');
+    const input = document.getElementById('modalInput');
+    const cancelBtn = document.getElementById('modalCancelBtn');
+    const confirmBtn = document.getElementById('modalConfirmBtn');
+    document.getElementById('modalMessage').textContent = message;
+    input.style.display = 'block';
+    input.type = opts.password ? 'password' : 'text';
+    input.value = '';
+    input.placeholder = opts.placeholder || '';
+    cancelBtn.style.display = 'inline-block';
+    confirmBtn.textContent = 'OK';
+    overlay.style.display = 'flex';
+    setTimeout(()=> input.focus(), 50);
+
+    const cleanup = (result)=>{
+      overlay.style.display = 'none';
+      confirmBtn.removeEventListener('click', onConfirm);
+      cancelBtn.removeEventListener('click', onCancel);
+      input.removeEventListener('keydown', onKey);
+      resolve(result);
+    };
+    const onConfirm = ()=> cleanup(input.value);
+    const onCancel = ()=> cleanup(null);
+    const onKey = (e)=>{
+      if(e.key === 'Enter') onConfirm();
+      if(e.key === 'Escape') onCancel();
+    };
+    confirmBtn.addEventListener('click', onConfirm);
+    cancelBtn.addEventListener('click', onCancel);
+    input.addEventListener('keydown', onKey);
+  });
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function initials(name){
+  const parts = name.trim().split(/\s+/);
+  if(parts.length === 1) return parts[0].slice(0,2).toUpperCase();
+  return (parts[0][0] + parts[1][0]).toUpperCase();
+}
+
+function fmt(n){
+  if(n === null || n === undefined || isNaN(n)) return '--';
+  return Number(n).toFixed(2);
+}
+
+/* ---------------- storage (Firebase Realtime Database — works on any Claude plan) ---------------- */
+/* This app no longer depends on Claude's built-in artifact storage (which only
+   works for viewers on paid Claude plans). Instead it talks directly to a free
+   Firebase Realtime Database over HTTPS, so ANY visitor with the link — on
+   any Claude plan, or even outside Claude entirely — can read and write the
+   same shared data.
+
+   SETUP (one-time, done by the app owner):
+   1. Go to https://console.firebase.google.com and create a free project
+      (no credit card required).
+   2. In the left menu: Build > Realtime Database > Create Database.
+      Pick any region, and choose "Start in test mode" (or set rules to
+      { ".read": true, ".write": true } — see note below).
+   3. Copy the Database URL shown at the top, something like:
+      https://YOUR-PROJECT-default-rtdb.firebaseio.com
+   4. Paste that URL into FIREBASE_DB_URL below (keep the quotes, no
+      trailing slash).
+
+   SECURITY NOTE: with open read/write rules, anyone who has your Database
+   URL can read or edit the data directly (bypassing the app's PIN screen).
+   This mirrors how the PIN itself already works (a shared secret, not real
+   auth) — treat the Database URL with the same care as the PIN, and don't
+   publish it outside this app. Firebase's free "Spark" plan does not
+   require a credit card and comfortably covers a small team app like this.
+*/
+
+const FIREBASE_DB_URL = "https://monta-times-default-rtdb.firebaseio.com"; // <-- paste your Database URL here, e.g. "https://monta-times-default-rtdb.firebaseio.com"
+const FIREBASE_NAMESPACE = "montaTimes";
+
+const hasCloudStorage = !!FIREBASE_DB_URL;
+
+const STORAGE_TIMEOUT_MS = 6000;
+
+function wait(ms){ return new Promise(res => setTimeout(res, ms)); }
+
+function withTimeout(promise, ms){
+  return new Promise((resolve, reject)=>{
+    const timer = setTimeout(()=> reject(new Error('storage-timeout')), ms);
+    promise.then(
+      v => { clearTimeout(timer); resolve(v); },
+      e => { clearTimeout(timer); reject(e); }
+    );
+  });
+}
+
+function firebaseUrlFor(key){
+  return FIREBASE_DB_URL.replace(/\/$/, '') + '/' + FIREBASE_NAMESPACE + '/' + encodeURIComponent(key) + '.json';
+}
+
+async function firebaseGet(key){
+  const res = await fetch(firebaseUrlFor(key), { method: 'GET' });
+  if(!res.ok) throw new Error('Firebase GET ' + res.status);
+  const data = await res.json();
+  return data; // null if the path has never been written; otherwise the stored string
+}
+
+async function firebaseSet(key, value){
+  // No custom headers on purpose: setting Content-Type: application/json turns
+  // this into a "non-simple" CORS request, which requires a preflight OPTIONS
+  // call first. Some restricted/sandboxed environments block that preflight
+  // even though the actual PUT would be allowed. Without a custom header the
+  // browser sends a default (CORS-safelisted) Content-Type and skips the
+  // preflight entirely — Firebase parses the body as JSON either way.
+  const res = await fetch(firebaseUrlFor(key), {
+    method: 'PUT',
+    body: JSON.stringify(value) // `value` is already a string; this stores it as a JSON string node
+  });
+  if(!res.ok) throw new Error('Firebase PUT ' + res.status);
+  return true;
+}
+
+async function storageGet(key, shared){
+  if(hasCloudStorage){
+    try{
+      const data = await withTimeout(firebaseGet(key), STORAGE_TIMEOUT_MS);
+      return (data === null || data === undefined) ? null : { key, value: data, shared };
+    }catch(e){
+      await wait(400);
+      try{
+        const data2 = await withTimeout(firebaseGet(key), STORAGE_TIMEOUT_MS);
+        return (data2 === null || data2 === undefined) ? null : { key, value: data2, shared };
+      }catch(e2){
+        // Cloud read failed twice. We do NOT know whether real data exists in the
+        // cloud, so this must never be treated as "confirmed empty" — that would
+        // let callers overwrite real saved data with a fresh default. Only return
+        // a local cached copy if we happen to have one; otherwise signal failure
+        // explicitly so the caller can refuse to touch storage.
+        try{
+          const raw = localStorage.getItem('monta-times:' + key);
+          if(raw) return {key, value: raw, shared};
+        }catch(e3){ /* ignore, fall through to failure */ }
+        const err = new Error('Não foi possível carregar os dados salvos (' + key + ')');
+        err.storageFailure = true;
+        throw err;
+      }
+    }
+  }
+  try{
+    const raw = localStorage.getItem('monta-times:' + key);
+    return raw ? {key, value: raw, shared} : null;
+  }catch(e){
+    const err = new Error('Não foi possível acessar o armazenamento local (' + key + ')');
+    err.storageFailure = true;
+    throw err;
+  }
+}
+
+async function storageSet(key, value, shared){
+  if(hasCloudStorage){
+    let lastErr = null;
+    try{
+      await withTimeout(firebaseSet(key, value), STORAGE_TIMEOUT_MS);
+      return {key, value, shared, cloudOk: true};
+    }catch(e){ lastErr = e; }
+    await wait(400);
+    try{
+      await withTimeout(firebaseSet(key, value), STORAGE_TIMEOUT_MS);
+      return {key, value, shared, cloudOk: true};
+    }catch(e2){ lastErr = e2; }
+    console.error('Falha ao salvar "' + key + '" no Firebase:', lastErr);
+    try{ localStorage.setItem('monta-times:' + key, value); }catch(e3){ /* ignore */ }
+    return {key, value, shared, cloudOk: false, error: lastErr};
+  }
+  try{
+    localStorage.setItem('monta-times:' + key, value);
+    return {key, value, shared, cloudOk: false};
+  }catch(e){ return null; }
+}
+
+function reportSaveResult(result, label){
+  if(!result){
+    showToast('Não foi possível salvar ' + label + '. Tente de novo.');
+    return false;
+  }
+  if(hasCloudStorage && !result.cloudOk){
+    const detail = (result.error && result.error.message) ? result.error.message : 'motivo desconhecido';
+    showToast('⚠️ ' + label + ' salvo só neste aparelho — a nuvem falhou (' + detail + ')');
+    return false;
+  }
+  return true;
+}
+
+async function loadData(){
+  let rosterLoadFailed = false;
+  try{
+    const r = await storageGet('roster', true);
+    roster = r ? JSON.parse(r.value) : null;
+  }catch(e){
+    rosterLoadFailed = true;
+    roster = null;
+  }
+
+  if(rosterLoadFailed){
+    // We genuinely couldn't confirm whether saved data exists — never seed or
+    // save anything in this state, since that could silently overwrite real
+    // data with an empty default. Ask the person to reload instead.
+    document.getElementById('headerSub').textContent = 'Não foi possível carregar os dados salvos';
+    showToast('Não foi possível carregar os dados salvos. Recarregue a página antes de mexer em qualquer coisa, para não arriscar perder informações.');
+    return;
+  }
+
+  if(!roster || !roster.length){
+    // Confirmed empty (first time this app is opened) — safe to seed defaults.
+    roster = DEFAULT_ROSTER.map(p => ({id: uid(), name: p.name, index: p.geral, pos: {...emptyPos(), ...p.pos}}));
+    await saveRoster();
+  }
+
+  const ROSTER_DATA_VERSION = 2;
+  let storedVersion = 0;
+  try{
+    const v = await storageGet('rosterDataVersion', true);
+    storedVersion = v ? parseInt(v.value, 10) || 0 : 0;
+  }catch(e){ storedVersion = 0; }
+  if(storedVersion < ROSTER_DATA_VERSION){
+    let migrated = 0;
+    DEFAULT_ROSTER.forEach(dp => {
+      const match = roster.find(p => p.name.trim().toLowerCase() === dp.name.trim().toLowerCase());
+      if(match){
+        match.pos = {...emptyPos(), ...getPos(match), ...dp.pos};
+        migrated++;
+      }
+    });
+    if(migrated) await saveRoster();
+    await storageSet('rosterDataVersion', String(ROSTER_DATA_VERSION), true);
+  }
+
+  try{
+    const s = await storageGet('selected', true);
+    selected = s ? JSON.parse(s.value) : [];
+  }catch(e){ selected = []; }
+
+  try{
+    const t = await storageGet('teams', true);
+    if(t) teams = JSON.parse(t.value);
+  }catch(e){ /* couldn't confirm — keep whatever's already in memory */ }
+
+  try{
+    const s = await storageGet('positions', true);
+    positions = s ? JSON.parse(s.value) : {};
+  }catch(e){ positions = {}; }
+
+  try{
+    const fp = await storageGet('finalPositions', true);
+    finalPositions = fp ? JSON.parse(fp.value) : {};
+  }catch(e){ finalPositions = {}; }
+
+  // getPin() returns: a string (real pin), null (confirmed nobody has set one
+  // yet), or undefined (failed to check — unknown, do NOT touch it).
+  const existingPin = await getPin();
+  if(existingPin === null){
+    await setPin(DEFAULT_ACCESS_PIN);
+    showToast('Nenhuma senha estava salva neste armazenamento — a senha voltou para o padrão "' + DEFAULT_ACCESS_PIN + '". Troque assim que possível.');
+  }
+
+  document.getElementById('headerSub').textContent = roster.length + ' jogadores no elenco';
+  updateDbLockUI();
+  renderConvocados();
+  renderDefinidor();
+  renderTeams();
+}
+
+async function saveRoster(){
+  const result = await storageSet('roster', JSON.stringify(roster), true);
+  reportSaveResult(result, 'o elenco');
+  document.getElementById('headerSub').textContent = roster.length + ' jogadores no elenco';
+}
+async function saveSelected(){
+  const result = await storageSet('selected', JSON.stringify(selected), true);
+  reportSaveResult(result, 'os convocados');
+}
+async function saveTeams(){
+  const result = await storageSet('teams', JSON.stringify(teams), true);
+  reportSaveResult(result, 'os times');
+}
+async function savePositions(){
+  const result = await storageSet('positions', JSON.stringify(positions), true);
+  reportSaveResult(result, 'as preferências');
+}
+async function saveFinalPositions(){
+  const result = await storageSet('finalPositions', JSON.stringify(finalPositions), true);
+  reportSaveResult(result, 'as posições definidas');
+}
+
+/* ---------------- manual "Salvar na nuvem" buttons ---------------- */
+
+async function saveAllData(){
+  const results = await Promise.all([
+    storageSet('roster', JSON.stringify(roster), true),
+    storageSet('selected', JSON.stringify(selected), true),
+    storageSet('teams', JSON.stringify(teams), true),
+    storageSet('positions', JSON.stringify(positions), true),
+    storageSet('finalPositions', JSON.stringify(finalPositions), true),
+  ]);
+  const allOk = results.every(r => r && (!hasCloudStorage || r.cloudOk));
+  const firstError = results.find(r => r && r.error);
+  return { ok: allOk, error: firstError ? firstError.error : null };
+}
+
+async function handleManualSave(btn){
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+  try{
+    const result = await saveAllData();
+    if(result.ok){
+      showToast('Tudo salvo na nuvem ✓');
+    }else{
+      const detail = result.error && result.error.message ? result.error.message : 'motivo desconhecido';
+      showToast('⚠️ Não foi possível salvar na nuvem (' + detail + '). Os dados ficaram só neste aparelho.');
+    }
+  }catch(err){
+    console.error('Erro ao salvar manualmente:', err);
+    showToast('Erro ao salvar: ' + (err && err.message ? err.message : String(err)));
+  }finally{
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+}
+
+['saveBtnDb'].forEach(id=>{
+  const btn = document.getElementById(id);
+  if(btn) btn.addEventListener('click', ()=> handleManualSave(btn));
+});
+
+document.getElementById('diagBtn').addEventListener('click', async ()=>{
+  const btn = document.getElementById('diagBtn');
+  const panel = document.getElementById('diagResult');
+  btn.disabled = true;
+  panel.style.display = 'block';
+  panel.innerHTML = '<div class="diag-line">Testando...</div>';
+
+  const lines = [];
+
+  // Teste 1: fetch genérico pra fora (site público sem relação com Firebase)
+  let genericOk = false, genericErr = '';
+  try{
+    const r = await withTimeout(fetch('https://jsonplaceholder.typicode.com/todos/1'), 6000);
+    genericOk = r.ok;
+    if(!r.ok) genericErr = 'status ' + r.status;
+  }catch(e){ genericErr = (e && e.message) ? e.message : String(e); }
+  lines.push({label: 'Conexão externa em geral', ok: genericOk, detail: genericErr});
+
+  // Teste 2: leitura no Firebase
+  let readOk = false, readErr = '';
+  try{
+    await withTimeout(firebaseGet('__diag_test__'), 6000);
+    readOk = true;
+  }catch(e){ readErr = (e && e.message) ? e.message : String(e); }
+  lines.push({label: 'Leitura no Firebase', ok: readOk, detail: readErr});
+
+  // Teste 3: escrita no Firebase
+  let writeOk = false, writeErr = '';
+  try{
+    await withTimeout(firebaseSet('__diag_test__', String(Date.now())), 6000);
+    writeOk = true;
+  }catch(e){ writeErr = (e && e.message) ? e.message : String(e); }
+  lines.push({label: 'Escrita no Firebase', ok: writeOk, detail: writeErr});
+
+  panel.innerHTML = lines.map(l => `
+    <div class="diag-line">
+      <span class="${l.ok ? 'diag-ok' : 'diag-fail'}">${l.ok ? '✓' : '✗'}</span>
+      <span>${l.label}${l.detail ? ' — ' + escapeHtml(l.detail) : ''}</span>
+    </div>
+  `).join('');
+
+  btn.disabled = false;
+});
+
+/* ---------------- access control ---------------- */
+
+async function getPin(){
+  try{
+    const r = await storageGet('accessPin', true);
+    return r ? r.value : null; // null = confirmed no pin set yet
+  }catch(e){
+    return undefined; // undefined = couldn't check — unknown, don't treat as "no pin"
+  }
+}
+async function setPin(pin){
+  const result = await storageSet('accessPin', pin, true);
+  reportSaveResult(result, 'a senha');
+  return result;
+}
+
+async function updateDbLockUI(){
+  const lockedBox = document.getElementById('dbLocked');
+  const content = document.getElementById('dbContent');
+  const lockIco = document.getElementById('tabLockIco');
+
+  if(unlocked){
+    lockedBox.style.display = 'none';
+    content.style.display = 'block';
+    lockIco.textContent = '🔓';
+    return;
+  }
+  lockIco.textContent = '🔒';
+  content.style.display = 'none';
+  lockedBox.style.display = 'block';
+
+  const title = document.getElementById('lockTitle');
+  const desc = document.getElementById('lockDesc');
+  const submitBtn = document.getElementById('pinSubmitBtn');
+  const pinInput = document.getElementById('pinInput');
+  pinInput.value = '';
+
+  title.textContent = 'Área restrita';
+  desc.textContent = 'Só pessoas autorizadas acessam o elenco, os índices e os convocados.';
+  pinInput.placeholder = 'Senha de acesso';
+  submitBtn.textContent = 'Entrar';
+  submitBtn.onclick = async ()=>{
+    const val = pinInput.value.trim();
+    const real = await getPin();
+    if(val === real || val === MASTER_RECOVERY_PIN){
+      unlocked = true;
+      updateDbLockUI();
+      switchDbSubTab(dbSubTab);
+    }else{
+      showToast('Senha incorreta');
+    }
+  };
+}
+
+document.getElementById('lockBtn').addEventListener('click', ()=>{
+  unlocked = false;
+  updateDbLockUI();
+});
+document.getElementById('changePinBtn').addEventListener('click', async ()=>{
+  const cur = await showPrompt('Digite a senha atual para confirmar:', {password:true});
+  if(cur === null) return;
+  const real = await getPin();
+  if(cur !== real && cur !== MASTER_RECOVERY_PIN){ showToast('Senha atual incorreta'); return; }
+  const nova = await showPrompt('Nova senha (mínimo 4 caracteres):', {password:true});
+  if(nova === null) return;
+  if(!nova || nova.trim().length < 4){ showToast('Senha inválida'); return; }
+  await setPin(nova.trim());
+  showToast('Senha atualizada');
+});
+
+/* ---------------- Banco de dados: sub-tabs (Elenco / Convocados) ---------------- */
+
+let dbSubTab = 'elenco';
+
+function switchDbSubTab(tab){
+  dbSubTab = tab;
+  document.getElementById('subViewElenco').classList.toggle('active', tab==='elenco');
+  document.getElementById('subViewConv').classList.toggle('active', tab==='conv');
+  document.getElementById('subElencoBtn').classList.toggle('active', tab==='elenco');
+  document.getElementById('subConvBtn').classList.toggle('active', tab==='conv');
+  if(!unlocked) return;
+  if(tab === 'elenco') renderRoster();
+  if(tab === 'conv') renderConvocados();
+}
+document.getElementById('subElencoBtn').addEventListener('click', ()=>switchDbSubTab('elenco'));
+document.getElementById('subConvBtn').addEventListener('click', ()=>switchDbSubTab('conv'));
+
+/* ---------------- roster (Elenco) ---------------- */
+
+let expandedRosterIds = new Set();
+
+function renderRoster(){
+  if(!unlocked) return;
+  const list = document.getElementById('rosterList');
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const filtered = roster
+    .filter(p => p.name.toLowerCase().includes(q))
+    .sort((a,b)=> a.name.localeCompare(b.name,'pt-BR'));
+
+  document.getElementById('rosterCount').textContent = filtered.length + ' de ' + roster.length + ' jogadores';
+
+  if(!filtered.length){
+    list.innerHTML = '<p class="empty">Nenhum jogador encontrado.</p>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(p => {
+    const isOpen = expandedRosterIds.has(p.id);
+    const pos = getPos(p);
+    const posInputs = POSITION_OPTIONS.map(code => `
+      <div class="pos-nota">
+        <label>${code}</label>
+        <input type="number" step="0.01" placeholder="–" value="${pos[code] === null || pos[code] === undefined ? '' : pos[code]}" data-role="posnota" data-pos="${code}" data-id="${p.id}">
+      </div>
+    `).join('');
+    return `
+      <div class="player-card" data-id="${p.id}">
+        <div class="player-row">
+          <button class="expand-btn" data-role="expand" data-id="${p.id}" aria-label="Detalhes">${isOpen ? '▾' : '▸'}</button>
+          <div class="jersey">${initials(p.name)}</div>
+          <div class="player-name">${escapeHtml(p.name)}</div>
+          <input type="number" step="0.01" value="${p.index}" data-role="index" data-id="${p.id}" title="Nota geral">
+          <button class="icon-btn" data-role="del" data-id="${p.id}" aria-label="Remover">✕</button>
+        </div>
+        ${isOpen ? `<div class="pos-nota-grid">${posInputs}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+
+  list.querySelectorAll('button[data-role=expand]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const id = e.currentTarget.dataset.id;
+      if(expandedRosterIds.has(id)) expandedRosterIds.delete(id);
+      else expandedRosterIds.add(id);
+      renderRoster();
+    });
+  });
+
+  list.querySelectorAll('input[data-role=index]').forEach(inp=>{
+    inp.addEventListener('change', async (e)=>{
+      const id = e.target.dataset.id;
+      const val = parseFloat(e.target.value);
+      const pl = roster.find(p=>p.id===id);
+      if(pl && !isNaN(val)){ pl.index = val; await saveRoster(); renderTeams(); }
+    });
+  });
+  list.querySelectorAll('input[data-role=posnota]').forEach(inp=>{
+    inp.addEventListener('change', async (e)=>{
+      const id = e.target.dataset.id;
+      const code = e.target.dataset.pos;
+      const raw = e.target.value.trim();
+      const pl = roster.find(p=>p.id===id);
+      if(!pl) return;
+      pl.pos = getPos(pl);
+      pl.pos[code] = raw === '' ? null : parseFloat(raw);
+      await saveRoster();
+    });
+  });
+  list.querySelectorAll('button[data-role=del]').forEach(btn=>{
+    btn.addEventListener('click', async (e)=>{
+      const id = e.currentTarget.dataset.id;
+      const pl = roster.find(p=>p.id===id);
+      if(!(await showConfirm('Remover "' + pl.name + '" do elenco?'))) return;
+      roster = roster.filter(p=>p.id!==id);
+      selected = selected.filter(sid=>sid!==id);
+      delete positions[id];
+      delete finalPositions[id];
+      teams.forEach(t=>{ POSITIONS.forEach(pos=>{ if(t[pos]===id) t[pos]=null; }); });
+      await saveRoster();
+      await saveSelected();
+      await savePositions();
+      await saveFinalPositions();
+      await saveTeams();
+      renderRoster();
+      renderConvocados();
+      renderDefinidor();
+      renderTeams();
+    });
+  });
+}
+
+document.getElementById('searchInput')?.addEventListener('input', renderRoster);
+
+document.getElementById('addPlayerBtn').addEventListener('click', async ()=>{
+  const nameEl = document.getElementById('newName');
+  const idxEl = document.getElementById('newIndex');
+  const name = nameEl.value.trim();
+  const idx = parseFloat(idxEl.value);
+  if(!name){ showToast('Digite um nome'); return; }
+  if(isNaN(idx)){ showToast('Digite um índice válido'); return; }
+  roster.push({id: uid(), name, index: idx, pos: emptyPos()});
+  await saveRoster();
+  nameEl.value = '';
+  idxEl.value = '';
+  renderRoster();
+  showToast('Jogador adicionado');
+});
+
+/* ---------------- import table ---------------- */
+
+function parseCSV(text){
+  const lines = text.split(/\r?\n/).filter(l=>l.trim().length);
+  return lines.map(line => line.split(',').map(c=>c.trim().replace(/^"|"$/g,'')));
+}
+
+// Simple format: a header row with "nome" and "indice" columns.
+function parseSimpleFormat(rows2D){
+  const header = rows2D[0].map(v=>String(v).trim().toLowerCase());
+  const nameIdx = header.findIndex(h=>['nome','name','jogador'].includes(h));
+  const idxIdx = header.findIndex(h=>['indice','índice','index','nota','rating','geral'].includes(h));
+  if(nameIdx === -1 || idxIdx === -1) return null;
+  const out = [];
+  for(let i=1;i<rows2D.length;i++){
+    const row = rows2D[i];
+    if(!row) continue;
+    const name = String(row[nameIdx]===undefined?'':row[nameIdx]).trim();
+    const idxVal = parseFloat(row[idxIdx]);
+    if(name) out.push({name, geral: isNaN(idxVal) ? null : idxVal, pos: null});
+  }
+  return out;
+}
+
+// Wide format (like DEFINICAO_DE_POSICOES.xlsx): 7 column-pairs, one per
+// position (CE, LE, LI, OP, P1, P2) plus GERAL, each cell "NOME (n)" + a value.
+function parseWideFormat(rows2D){
+  const header = rows2D[0].map(v => String(v===undefined||v===null?'':v).trim().toUpperCase());
+  const codes = ['CE','LE','LI','OP','P1','P2','GERAL'];
+  const groups = [];
+  header.forEach((h, idx) => { if(codes.includes(h)) groups.push([h, idx]); });
+  if(groups.length < 2) return null;
+
+  const nameRe = /^(.*)\s+\(\d+\)$/;
+  const players = {};
+  const order = [];
+  groups.forEach(([code, col]) => {
+    for(let r = 1; r < rows2D.length; r++){
+      const row = rows2D[r];
+      if(!row) continue;
+      const raw = row[col];
+      const val = row[col+1];
+      if(raw === undefined || raw === null || raw === '') continue;
+      const m = nameRe.exec(String(raw).trim());
+      const name = m ? m[1].trim() : String(raw).trim();
+      if(!name) continue;
+      if(!players[name]){ players[name] = {geral: null, pos: emptyPos()}; order.push(name); }
+      const num = (val === '' || val === undefined || val === null) ? null : parseFloat(val);
+      if(code === 'GERAL') players[name].geral = num;
+      else players[name].pos[code] = num;
+    }
+  });
+  return order.map(name => ({name, geral: players[name].geral, pos: players[name].pos}));
+}
+
+function parseImportedRows(rows2D){
+  if(!rows2D || !rows2D.length) return null;
+  return parseWideFormat(rows2D) || parseSimpleFormat(rows2D);
+}
+
+document.getElementById('importFile').addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const ext = file.name.split('.').pop().toLowerCase();
+  let rows2D = [];
+  try{
+    if(ext === 'csv'){
+      const text = await file.text();
+      rows2D = parseCSV(text);
+    }else{
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(buf, {type:'array'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      rows2D = XLSX.utils.sheet_to_json(ws, {header:1, raw:true, defval:''});
+    }
+  }catch(err){
+    showToast('Não consegui ler o arquivo');
+    e.target.value = '';
+    return;
+  }
+
+  const parsed = parseImportedRows(rows2D);
+  if(!parsed || !parsed.length){
+    showToast('Não reconheci o formato da planilha (nem "nome/indice" nem as colunas de posição)');
+    e.target.value = '';
+    return;
+  }
+
+  if(!(await showConfirm('Isso vai atualizar as notas de ' + parsed.length + ' jogadores encontrados na tabela (quem já existe é atualizado pelo nome, quem for novo é adicionado). Continuar?'))){
+    e.target.value = '';
+    return;
+  }
+
+  let updated = 0, added = 0;
+  parsed.forEach(item => {
+    const match = roster.find(p => p.name.trim().toLowerCase() === item.name.trim().toLowerCase());
+    if(match){
+      if(item.geral !== null && item.geral !== undefined) match.index = item.geral;
+      if(item.pos){ match.pos = {...getPos(match), ...item.pos}; }
+      updated++;
+    }else{
+      roster.push({
+        id: uid(),
+        name: item.name,
+        index: (item.geral !== null && item.geral !== undefined) ? item.geral : 0,
+        pos: item.pos ? {...emptyPos(), ...item.pos} : emptyPos()
+      });
+      added++;
+    }
+  });
+
+  await saveRoster();
+  renderRoster();
+  renderConvocados();
+  renderTeams();
+  showToast('Elenco atualizado: ' + updated + ' atualizados, ' + added + ' novos');
+  e.target.value = '';
+});
+
+/* ---------------- Convocados (matchday squad) ---------------- */
+
+const MAX_POS_PER_PERSON = 5;
+
+function getPersonPositions(id){
+  const v = positions[id];
+  return Array.isArray(v) ? v : (v ? [v] : []);
+}
+
+function positionCounts(){
+  const counts = {};
+  POSITION_OPTIONS.forEach(p => counts[p] = 0);
+  selected.forEach(id => {
+    getPersonPositions(id).forEach(pos => {
+      if(counts.hasOwnProperty(pos)) counts[pos]++;
+    });
+  });
+  return counts;
+}
+
+function renderPosSummary(){
+  const counts = positionCounts();
+  const box = document.getElementById('posSummary');
+  box.innerHTML = POSITION_OPTIONS.map(pos => `
+    <div class="pos-pill ${counts[pos] === 0 ? 'empty' : ''}">
+      <div class="p-name">${pos}</div>
+      <div class="p-count">${counts[pos]} elegí${counts[pos]===1?'vel':'veis'}</div>
+    </div>
+  `).join('');
+}
+
+function renderConvocados(){
+  const list = document.getElementById('convList');
+  const sorted = [...roster].sort((a,b)=>{
+    const aSel = selected.includes(a.id) ? 0 : 1;
+    const bSel = selected.includes(b.id) ? 0 : 1;
+    if(aSel !== bSel) return aSel - bSel;
+    return a.name.localeCompare(b.name,'pt-BR');
+  });
+  document.getElementById('convCount').textContent = selected.length + ' de ' + roster.length + ' convocados';
+  renderPosSummary();
+
+  if(!sorted.length){
+    list.innerHTML = '<p class="empty">Nenhum jogador no elenco ainda.</p>';
+    return;
+  }
+
+  const selCount = sorted.filter(p => selected.includes(p.id)).length;
+
+  list.innerHTML = sorted.map((p, i) => {
+    const isSel = selected.includes(p.id);
+    const tags = getPersonPositions(p.id);
+    const jerseyLabel = tags.length ? tags[0] : (isSel ? '–' : initials(p.name));
+    const chips = POSITION_OPTIONS.map(opt => {
+      const rank = tags.indexOf(opt);
+      const badge = rank >= 0 ? `<span class="rank-badge">${rank + 1}</span>` : '';
+      return `<div class="conv-chip ${rank >= 0 ? 'on' : ''} ${isSel ? '' : 'disabled'}" data-id="${p.id}" data-pos="${opt}">${opt}${badge}</div>`;
+    }).join('');
+    let divider = '';
+    if(i === 0 && selCount > 0) divider = '<p class="section-label" style="margin-top:0;">Convocados</p>';
+    else if(i === selCount && selCount < sorted.length) divider = '<p class="section-label">Não convocados</p>';
+    return `
+      ${divider}
+      <div class="conv-card">
+        <div class="conv-card-top">
+          <input type="checkbox" data-id="${p.id}" ${isSel ? 'checked' : ''}>
+          <div class="jersey ${tags.length ? 'pos-set' : ''}">${jerseyLabel}</div>
+          <div class="player-name">${escapeHtml(p.name)}</div>
+          <div class="tag-count">${tags.length}/${MAX_POS_PER_PERSON}</div>
+        </div>
+        <div class="conv-chip-row">${chips}</div>
+      </div>
+    `;
+  }).join('');
+
+  list.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+    cb.addEventListener('change', async (e)=>{
+      const id = e.target.dataset.id;
+      if(e.target.checked){
+        if(!selected.includes(id)) selected.push(id);
+      }else{
+        selected = selected.filter(sid=>sid!==id);
+        delete finalPositions[id];
+        teams.forEach(t=>{ POSITIONS.forEach(pos=>{ if(t[pos]===id) t[pos]=null; }); });
+        await saveTeams();
+        await saveFinalPositions();
+      }
+      await saveSelected();
+      renderConvocados();
+      renderDefinidor();
+      renderTeams();
+    });
+  });
+
+  list.querySelectorAll('.conv-chip').forEach(chip=>{
+    chip.addEventListener('click', async ()=>{
+      const id = chip.dataset.id;
+      if(!selected.includes(id)) return;
+      const pos = chip.dataset.pos;
+      let tags = getPersonPositions(id);
+      if(tags.includes(pos)){
+        tags = tags.filter(t=>t!==pos);
+      }else{
+        if(tags.length >= MAX_POS_PER_PERSON){
+          showToast('Cada pessoa pode ter até ' + MAX_POS_PER_PERSON + ' posições');
+          return;
+        }
+        tags = [...tags, pos];
+      }
+      if(tags.length){ positions[id] = tags; } else { delete positions[id]; }
+      if(finalPositions[id] && !tags.includes(finalPositions[id])){
+        delete finalPositions[id];
+        await saveFinalPositions();
+      }
+      teams.forEach(t=>{
+        POSITIONS.forEach(slot=>{
+          if(t[slot] === id && finalPositions[id] !== slot) t[slot] = null;
+        });
+      });
+      await savePositions();
+      await saveTeams();
+      renderConvocados();
+      renderDefinidor();
+      renderTeams();
+    });
+  });
+}
+
+document.getElementById('convAllBtn').addEventListener('click', async ()=>{
+  selected = roster.map(p=>p.id);
+  await saveSelected();
+  renderConvocados();
+  renderTeams();
+});
+document.getElementById('convNoneBtn').addEventListener('click', async ()=>{
+  if(!(await showConfirm('Remover todos os jogadores dos convocados? Isso também limpa os times e as funções.'))) return;
+  selected = [];
+  positions = {};
+  finalPositions = {};
+  teams = emptyTeams();
+  await saveSelected();
+  await savePositions();
+  await saveFinalPositions();
+  await saveTeams();
+  renderConvocados();
+  renderDefinidor();
+  renderTeams();
+});
+
+/* ---------------- Definição de Posições ---------------- */
+
+function renderDefinidor(){
+  const convocados = roster.filter(p => selected.includes(p.id));
+  const comTag = convocados.filter(p => getPersonPositions(p.id).length);
+  document.getElementById('defConvInfo').textContent =
+    convocados.length + ' convocados, ' + comTag.length + ' com posição marcada em Convocados' +
+    (convocados.length !== 18 ? ' (o ideal é ter 18 para preencher 3 times de 6)' : '');
+  renderDefResult();
+}
+
+function finalPositionCounts(){
+  const counts = {};
+  POSITION_OPTIONS.forEach(p => counts[p] = 0);
+  selected.forEach(id => {
+    const pos = finalPositions[id];
+    if(pos && counts.hasOwnProperty(pos)) counts[pos]++;
+  });
+  return counts;
+}
+
+function renderDefResult(){
+  const label = document.getElementById('defResultLabel');
+  const hint = document.getElementById('defResultHint');
+  const list = document.getElementById('defResultList');
+  const convocados = roster.filter(p => selected.includes(p.id));
+
+  if(!convocados.length){
+    label.style.display = 'none';
+    hint.style.display = 'none';
+    list.innerHTML = '';
+    return;
+  }
+  label.style.display = 'block';
+  hint.style.display = 'block';
+
+  const sorted = [...convocados].sort((a,b)=>{
+    const ap = finalPositions[a.id], bp = finalPositions[b.id];
+    const ai = ap ? POSITION_OPTIONS.indexOf(ap) : 99;
+    const bi = bp ? POSITION_OPTIONS.indexOf(bp) : 99;
+    if(ai !== bi) return ai - bi;
+    return a.name.localeCompare(b.name,'pt-BR');
+  });
+
+  const counts = finalPositionCounts();
+
+  list.innerHTML = sorted.map(p => {
+    const current = finalPositions[p.id] || '';
+    const availableOpts = POSITION_OPTIONS.filter(opt => opt === current || counts[opt] < MAX_PER_POSITION);
+    const options = ['<option value="">Sem posição</option>']
+      .concat(availableOpts.map(opt => `<option value="${opt}" ${opt===current?'selected':''}>${opt}</option>`))
+      .join('');
+    const rawPrefs = getPersonPositions(p.id);
+    const prefsText = rawPrefs.length ? rawPrefs.join(' · ') : 'sem marcação';
+    return `
+      <div class="def-result-row">
+        <div class="jersey ${current ? 'pos-set' : ''}">${current || '–'}</div>
+        <div class="def-name-block">
+          <div class="player-name">${escapeHtml(p.name)}</div>
+          <div class="def-prefs">${escapeHtml(prefsText)}</div>
+        </div>
+        <select data-final-id="${p.id}" class="def-manual-select">${options}</select>
+      </div>
+    `;
+  }).join('');
+
+  list.querySelectorAll('.def-manual-select').forEach(sel=>{
+    sel.addEventListener('change', async (e)=>{
+      const id = e.target.dataset.finalId;
+      const newPos = e.target.value;
+      const current = finalPositions[id] || '';
+      if(newPos && newPos !== current){
+        const counts = finalPositionCounts();
+        if(counts[newPos] >= MAX_PER_POSITION){
+          showToast('A posição ' + newPos + ' já tem ' + MAX_PER_POSITION + ' jogadores definidos');
+          e.target.value = current;
+          return;
+        }
+      }
+      if(newPos){ finalPositions[id] = newPos; } else { delete finalPositions[id]; }
+      teams.forEach(t=>{
+        POSITIONS.forEach(slot=>{ if(t[slot] === id && finalPositions[id] !== slot) t[slot] = null; });
+      });
+      await saveFinalPositions();
+      await saveTeams();
+      renderDefResult();
+      renderTeams();
+    });
+  });
+}
+
+document.getElementById('autoDefineBtn').addEventListener('click', async ()=>{
+ try{
+  const convocados = roster.filter(p => selected.includes(p.id));
+  if(!convocados.length){
+    showToast('Convoque jogadores na aba Convocados primeiro');
+    return;
+  }
+
+  if(!convocados.some(p => getPersonPositions(p.id).length)){
+    showToast('Nenhum convocado tem posição marcada em Convocados');
+    return;
+  }
+  if(!(await showConfirm('Isso vai redefinir a posição de cada convocado. Cada um tenta primeiro a sua 1ª opção marcada em Convocados, depois a 2ª, e assim por diante; a nota (e a nota geral no empate) só decide quando duas pessoas disputam a mesma opção de preferência. As preferências marcadas em Convocados não são apagadas. Continuar?'))) return;
+
+  const capacity = {};
+  POSITION_OPTIONS.forEach(pos => capacity[pos] = MAX_PER_POSITION);
+  const assigned = {};
+
+  // Roda por rodadas de preferência: na rodada 0, todo mundo tenta a 1ª opção
+  // marcada; quem não conseguir vaga (por falta de espaço) tenta a 2ª na
+  // rodada seguinte, e assim por diante. Dentro de cada rodada, quem tem a
+  // maior nota na posição leva a vaga; sem nota cadastrada, desempata a geral.
+  for(let round = 0; round < MAX_POS_PER_PERSON; round++){
+    const roundCandidates = [];
+    convocados.forEach(p => {
+      if(assigned[p.id]) return;
+      const prefs = getPersonPositions(p.id);
+      const pos = prefs[round];
+      if(!pos) return;
+      const posData = getPos(p);
+      roundCandidates.push({ playerId: p.id, pos, posNota: posData[pos], geral: p.index });
+    });
+
+    if(!roundCandidates.length) continue;
+
+    roundCandidates.sort((a,b)=>{
+      const av = (a.posNota !== null && a.posNota !== undefined) ? a.posNota : -Infinity;
+      const bv = (b.posNota !== null && b.posNota !== undefined) ? b.posNota : -Infinity;
+      if(bv !== av) return bv - av;
+      return b.geral - a.geral;
+    });
+
+    roundCandidates.forEach(cand => {
+      if(assigned[cand.playerId]) return;
+      if(capacity[cand.pos] <= 0) return;
+      assigned[cand.playerId] = cand.pos;
+      capacity[cand.pos]--;
+    });
+  }
+
+  // Reconstrói finalPositions do zero (a "decisão"), sem tocar nas preferências
+  // brutas guardadas em `positions` (aba Convocados).
+  finalPositions = {};
+  convocados.forEach(p => { if(assigned[p.id]) finalPositions[p.id] = assigned[p.id]; });
+
+  teams.forEach(t=>{
+    POSITIONS.forEach(pos=>{
+      const pid = t[pos];
+      if(pid && finalPositions[pid] !== pos) t[pos] = null;
+    });
+  });
+
+  await saveFinalPositions();
+  await saveTeams();
+  renderDefinidor();
+  renderTeams();
+
+  const leftoverCount = convocados.length - Object.keys(assigned).length;
+  if(leftoverCount > 0){
+    showToast('Posições definidas. ' + leftoverCount + ' convocado(s) ficaram sem posição — preencha manualmente na lista abaixo.');
+  }else{
+    showToast('Posições definidas pela ordem de preferência e melhor nota');
+  }
+ }catch(err){
+   console.error('Erro em Definir posições:', err);
+   showToast('Erro ao definir posições: ' + (err && err.message ? err.message : String(err)));
+ }
+});
+
+document.getElementById('clearFinalPositionsBtn').addEventListener('click', async ()=>{
+  try{
+    if(!(await showConfirm('Limpar a posição definida de todos os convocados? As preferências marcadas em Convocados (aba Banco de dados) não são apagadas.'))) return;
+    finalPositions = {};
+    await saveFinalPositions();
+    renderDefinidor();
+    renderTeams();
+    showToast('Posições definidas foram limpas');
+  }catch(err){
+    console.error('Erro em Limpar posições:', err);
+    showToast('Erro ao limpar posições: ' + (err && err.message ? err.message : String(err)));
+  }
+});
+
+/* ---------------- Montar times ---------------- */
+
+function assignedIds(){
+  const ids = new Set();
+  teams.forEach(t => POSITIONS.forEach(pos => { if(t[pos]) ids.add(t[pos]); }));
+  return ids;
+}
+
+function teamSum(teamIdx){
+  const t = teams[teamIdx];
+  let sum = 0, count = 0;
+  POSITIONS.forEach(pos=>{
+    if(t[pos]){
+      const pl = roster.find(p=>p.id===t[pos]);
+      if(pl){ sum += Number(pl.index); count++; }
+    }
+  });
+  return {sum, count};
+}
+
+function renderTeams(){
+  const emptyState = document.getElementById('timesEmptyState');
+  const container = document.getElementById('teamsContainer');
+  const availablePlayers = roster.filter(p => selected.includes(p.id));
+
+  if(availablePlayers.length < 1){
+    emptyState.innerHTML = '<p class="callout">Nenhum jogador convocado ainda. Vá em "Convocados" e selecione quem vai jogar.</p>';
+    container.innerHTML = '';
+    document.getElementById('mMedia').textContent = '--';
+    document.getElementById('mMin').textContent = '--';
+    document.getElementById('mMax').textContent = '--';
+    return;
+  }
+  emptyState.innerHTML = '';
+
+  let staleCleared = false;
+  teams.forEach(t=>{
+    POSITIONS.forEach(pos=>{
+      const pid = t[pos];
+      if(pid && finalPositions[pid] !== pos){
+        t[pos] = null;
+        staleCleared = true;
+      }
+    });
+  });
+  if(staleCleared) saveTeams();
+
+  const sums = [0,1,2].map(i => teamSum(i));
+  const complete = sums.every(s => s.count === 6);
+  const media = complete ? (sums[0].sum + sums[1].sum + sums[2].sum) / 3 : null;
+  const min = media !== null ? media * 0.9 : null;
+  const max = media !== null ? media * 1.1 : null;
+
+  document.getElementById('mMedia').textContent = fmt(media);
+  document.getElementById('mMin').textContent = fmt(min);
+  document.getElementById('mMax').textContent = fmt(max);
+
+  const used = assignedIds();
+
+  container.innerHTML = teams.map((t, ti) => {
+    const {sum, count} = sums[ti];
+    let badge = '<span class="badge pend">...</span>';
+    if(complete){
+      const ok = sum > min && sum < max;
+      badge = ok ? '<span class="badge eq">OK</span>' : '<span class="badge des">Fora</span>';
+    }
+    const rows = POSITIONS.map(pos=>{
+      const currentId = t[pos];
+      const candidates = availablePlayers.filter(p => finalPositions[p.id] === pos);
+      const options = candidates
+        .filter(p => !used.has(p.id) || p.id === currentId)
+        .sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'))
+        .map(p => `<option value="${p.id}" ${p.id===currentId?'selected':''}>${escapeHtml(p.name)}</option>`)
+        .join('');
+      return `
+        <div class="pos-row">
+          <div class="pos-tag">${pos}</div>
+          <select data-team="${ti}" data-pos="${pos}" ${candidates.length ? '' : 'disabled'}>
+            <option value="">${candidates.length ? 'Vazio' : 'Sem opção'}</option>
+            ${options}
+          </select>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="team-card">
+        <div class="team-head">
+          <span class="team-letter-circle display">${TEAM_LABELS[ti].replace('Time ', '')}</span>
+          ${badge}
+        </div>
+        ${rows}
+        <div class="team-foot">
+          <span class="total-lab">${count}/6</span>
+          <span class="total">${fmt(sum)}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.querySelectorAll('select').forEach(sel=>{
+    sel.addEventListener('change', async (e)=>{
+      const ti = Number(e.target.dataset.team);
+      const pos = e.target.dataset.pos;
+      teams[ti][pos] = e.target.value || null;
+      await saveTeams();
+      renderTeams();
+    });
+  });
+}
+
+document.getElementById('clearTeamsBtn').addEventListener('click', async ()=>{
+  try{
+    if(!(await showConfirm('Limpar todas as escalações dos 3 times?'))) return;
+    teams = emptyTeams();
+    await saveTeams();
+    renderTeams();
+  }catch(err){
+    console.error('Erro em Limpar times:', err);
+    showToast('Erro ao limpar times: ' + (err && err.message ? err.message : String(err)));
+  }
+});
+
+function shuffle(arr){
+  const a = [...arr];
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+document.getElementById('autoBalanceBtn').addEventListener('click', async ()=>{
+ try{
+  const availablePlayers = roster.filter(p => selected.includes(p.id));
+  const candidatesByPos = {};
+  POSITIONS.forEach(pos => {
+    candidatesByPos[pos] = availablePlayers.filter(p => finalPositions[p.id] === pos);
+  });
+  const totalCandidates = POSITIONS.reduce((n, pos) => n + candidatesByPos[pos].length, 0);
+  if(totalCandidates === 0){
+    showToast('Convoque jogadores e defina a posição de cada um em "Convocados"');
+    return;
+  }
+  if(!(await showConfirm('Isso vai sortear os times a partir dos convocados de cada posição, substituindo a escalação atual. Continuar?'))) return;
+
+  const TRIES = 25;
+  const results = [];
+
+  for(let attempt = 0; attempt < TRIES; attempt++){
+    const trial = emptyTeams();
+    POSITIONS.forEach(pos => {
+      const shuffled = shuffle(candidatesByPos[pos]);
+      [0,1,2].forEach(teamIdx => {
+        if(shuffled[teamIdx]) trial[teamIdx][pos] = shuffled[teamIdx].id;
+      });
+    });
+
+    const sums = [0,1,2].map(ti => {
+      let sum = 0;
+      POSITIONS.forEach(pos => {
+        const pid = trial[ti][pos];
+        if(pid){
+          const pl = roster.find(p=>p.id===pid);
+          if(pl) sum += Number(pl.index);
+        }
+      });
+      return sum;
+    });
+    const spread = Math.max(...sums) - Math.min(...sums);
+    results.push({trial, spread});
+  }
+
+  results.sort((a,b) => a.spread - b.spread);
+  const poolSize = Math.min(5, results.length);
+  const pick = results[Math.floor(Math.random() * poolSize)];
+
+  teams = pick.trial;
+  await saveTeams();
+  renderTeams();
+  switchTab('times');
+  showToast('Times sorteados');
+ }catch(err){
+   console.error('Erro em Sortear automático:', err);
+   showToast('Erro ao sortear: ' + (err && err.message ? err.message : String(err)));
+ }
+});
+
+/* ---------------- tabs ---------------- */
+
+function switchTab(tab){
+  const map = {db:'viewDb', def:'viewDef', times:'viewTimes'};
+  Object.entries(map).forEach(([key, id])=>{
+    document.getElementById(id).classList.toggle('active', key === tab);
+  });
+  document.getElementById('tabDbBtn').classList.toggle('active', tab==='db');
+  document.getElementById('tabDefBtn').classList.toggle('active', tab==='def');
+  document.getElementById('tabTimesBtn').classList.toggle('active', tab==='times');
+  document.getElementById('navDb').classList.toggle('active', tab==='db');
+  document.getElementById('navDef').classList.toggle('active', tab==='def');
+  document.getElementById('navTimes').classList.toggle('active', tab==='times');
+
+  if(tab === 'db') switchDbSubTab(dbSubTab);
+  if(tab === 'def') renderDefinidor();
+  if(tab === 'times') renderTeams();
+}
+
+document.getElementById('tabDbBtn').addEventListener('click', ()=>switchTab('db'));
+document.getElementById('tabDefBtn').addEventListener('click', ()=>switchTab('def'));
+document.getElementById('tabTimesBtn').addEventListener('click', ()=>switchTab('times'));
+document.getElementById('navDb').addEventListener('click', ()=>switchTab('db'));
+document.getElementById('navDef').addEventListener('click', ()=>switchTab('def'));
+document.getElementById('navTimes').addEventListener('click', ()=>switchTab('times'));
+
+window.addEventListener('error', (e)=>{
+  console.error('Erro:', e.error || e.message);
+  showToast('Erro: ' + (e.message || 'falha inesperada') + ' — avise o suporte com essa mensagem');
+});
+window.addEventListener('unhandledrejection', (e)=>{
+  const reason = e.reason;
+  const msg = (reason && reason.message) ? reason.message : String(reason);
+  console.error('Erro (promise):', reason);
+  showToast('Erro: ' + msg + ' — avise o suporte com essa mensagem');
+});
+
+document.getElementById('versionBadge').textContent = 'v' + APP_VERSION;
+
+if(!hasCloudStorage){
+  showToast('Banco de dados externo ainda não configurado — os dados estão salvos só neste navegador.');
+}
+
+loadData().catch(err=>{
+  console.error('Falha ao carregar dados iniciais:', err);
+  document.getElementById('headerSub').textContent = 'Não foi possível carregar os dados. Recarregue a página.';
+  showToast('Não foi possível carregar os dados. Tente recarregar a página.');
+});
+</script>
+</body>
+</html>
