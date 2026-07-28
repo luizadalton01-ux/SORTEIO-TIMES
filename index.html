@@ -896,7 +896,7 @@
     <p class="hint" style="margin-top:8px;">Cada convocado tenta primeiro a sua 1ª opção marcada em Convocados; só passa pra 2ª, 3ª... se não conseguir vaga na anterior. Quando duas pessoas disputam a mesma posição na mesma preferência (até 3 vagas), quem tem a maior nota naquela posição leva a vaga; sem nota cadastrada, o desempate é pela nota geral. Quem não tem nenhuma preferência marcada em Convocados aparece abaixo com um campo para escolher uma posição provisória — vale só para essa simulação e não é salva em Convocados.</p>
 
     <p class="section-label" id="defResultLabel" style="display:none;">Posição de cada convocado</p>
-    <p class="hint" id="defResultHint" style="display:none; margin:-8px 0 10px;">A posição de cada um pode ser ajustada manualmente aqui a qualquer momento. Se a posição já estiver cheia, dá pra escolher outro jogador mesmo assim: se a nota dele for melhor que a do mais fraco lá, ele entra no lugar (simulação); se não, a escolha é bloqueada.</p>
+    <p class="hint" id="defResultHint" style="display:none; margin:-8px 0 10px;">A posição de cada um pode ser ajustada manualmente aqui a qualquer momento. Se a posição já estiver cheia, dá pra escolher outro jogador mesmo assim: quem tem nota cadastrada na posição (0,1 ou mais) vence quem não tem, mesmo com nota geral menor; se os dois tiverem a mesma nota na posição (ou nenhum tiver), quem decide é a nota geral; se ainda empatar, a vaga do mais fraco fica em branco pra você decidir manualmente.</p>
     <div id="defResultList"></div>
   </section>
 
@@ -940,7 +940,7 @@
 <script>
 const POSITIONS = ["LE","P1","P2","OP","CE","LI"];
 const TEAM_LABELS = ["Time A","Time B","Time C"];
-const APP_VERSION = "3.11";
+const APP_VERSION = "3.17";
 const DEFAULT_ACCESS_PIN = "times2026";
 const MASTER_RECOVERY_PIN = "recovery2026";
 const DEFAULT_ROSTER = [{"name": "CONVIDADO", "geral": 1, "pos": {"CE": null, "LE": null, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "RUPERT", "geral": 0.976, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": 0, "P1": 0, "P2": 1.447}}, {"name": "PAULO MATEUS", "geral": 1.748, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": null}}, {"name": "MATEUS", "geral": 1.222, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 0}}, {"name": "ANDRE", "geral": 2.816, "pos": {"CE": 0, "LE": 0, "LI": 0, "OP": null, "P1": 0, "P2": 0}}, {"name": "FERNANDO", "geral": 0.984, "pos": {"CE": 0, "LE": 0, "LI": null, "OP": 0.913, "P1": null, "P2": null}}, {"name": "ANDREY", "geral": 2.484, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 2.812}}, {"name": "HOLANDA", "geral": 1.719, "pos": {"CE": 0, "LE": 1.75, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "FELIPE", "geral": 2.099, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 0, "P1": 2.225, "P2": 2.036}}, {"name": "JOAO PEDRO", "geral": 2.012, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 2.284, "P2": 0}}, {"name": "JOAO ALVES", "geral": 2.184, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": 0, "P1": 2.63, "P2": 1.54}}, {"name": "LAERT", "geral": 1.44, "pos": {"CE": 0, "LE": 1.851, "LI": null, "OP": null, "P1": 0, "P2": 0}}, {"name": "REINALDO", "geral": 1.572, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 1.341, "P1": null, "P2": 0}}, {"name": "CARLOS", "geral": 1.833, "pos": {"CE": 0, "LE": null, "LI": 1.851, "OP": null, "P1": null, "P2": null}}, {"name": "TIMOTEO", "geral": 1.194, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "JAO", "geral": -1.667, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 0, "P1": null, "P2": null}}, {"name": "DANIEL", "geral": 2.144, "pos": {"CE": 0, "LE": 0, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "PATRICK", "geral": 1.566, "pos": {"CE": 0, "LE": 1.229, "LI": 0, "OP": 0, "P1": 2.278, "P2": 2.053}}, {"name": "BINHA", "geral": 2.355, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 0, "P1": 2.723, "P2": 2.234}}, {"name": "KAUA", "geral": 1.142, "pos": {"CE": 0, "LE": 0, "LI": 0, "OP": null, "P1": 0, "P2": null}}, {"name": "HIGOR", "geral": 1.738, "pos": {"CE": 0, "LE": 0, "LI": 0, "OP": 1.088, "P1": 2.058, "P2": 1.671}}, {"name": "GUSTAVO", "geral": 2.003, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": 0, "P1": 0, "P2": 1.896}}, {"name": "MARCOS", "geral": 0.865, "pos": {"CE": 1.022, "LE": null, "LI": null, "OP": 0.569, "P1": null, "P2": null}}, {"name": "ADALTON", "geral": 2.125, "pos": {"CE": 1.092, "LE": null, "LI": null, "OP": 1.569, "P1": 2.57, "P2": 2.516}}, {"name": "FELIPE ROCHA", "geral": 1.261, "pos": {"CE": 1.267, "LE": null, "LI": 0, "OP": 1.236, "P1": 0, "P2": 0}}, {"name": "THIAGO", "geral": 1.496, "pos": {"CE": 1.667, "LE": 1.362, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "JORGE", "geral": 1.621, "pos": {"CE": 1.788, "LE": 1.331, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "GABRIEL", "geral": 1.751, "pos": {"CE": 1.942, "LE": 0, "LI": 1.203, "OP": 0, "P1": 0, "P2": 0}}, {"name": "RIAN", "geral": 3.86, "pos": {"CE": 3.86, "LE": null, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "WEUDESON", "geral": 1.746, "pos": {"CE": null, "LE": 0, "LI": 1.763, "OP": null, "P1": 0, "P2": 0}}, {"name": "DUARTE", "geral": 2.021, "pos": {"CE": null, "LE": 0, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "RANGEL", "geral": 1.782, "pos": {"CE": null, "LE": 0, "LI": 1.606, "OP": null, "P1": null, "P2": 0}}, {"name": "JOAO VITOR", "geral": 1.079, "pos": {"CE": null, "LE": 1.575, "LI": null, "OP": 0, "P1": null, "P2": 0}}, {"name": "SALGADO", "geral": 1.908, "pos": {"CE": null, "LE": 1.97, "LI": 0, "OP": null, "P1": 0, "P2": 0}}, {"name": "HENRIQUE", "geral": 0.651, "pos": {"CE": null, "LE": null, "LI": 0, "OP": 0.555, "P1": null, "P2": null}}, {"name": "IUKI", "geral": 0.549, "pos": {"CE": null, "LE": null, "LI": 0, "OP": 0, "P1": 0, "P2": null}}, {"name": "LUIZ FERNANDO", "geral": 1.491, "pos": {"CE": null, "LE": null, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "GARAY", "geral": 1.593, "pos": {"CE": null, "LE": null, "LI": 1.671, "OP": 0, "P1": null, "P2": 0}}, {"name": "WELTON", "geral": -0.125, "pos": {"CE": null, "LE": null, "LI": null, "OP": 0, "P1": null, "P2": null}}, {"name": "ADENILSON", "geral": 1.491, "pos": {"CE": null, "LE": null, "LI": null, "OP": 1.364, "P1": 0, "P2": 0}}, {"name": "VINY", "geral": 2.433, "pos": {"CE": null, "LE": null, "LI": null, "OP": 2.304, "P1": 0, "P2": 0}}, {"name": "LUIZ FELIPE", "geral": 2.362, "pos": {"CE": null, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 0}}, {"name": "PEDRO", "geral": 2.743, "pos": {"CE": null, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 0}}];
@@ -1915,21 +1915,33 @@ function finalPositionCounts(){
   return counts;
 }
 
-// Nota de um jogador numa posição, com o mesmo critério de desempate usado
-// em "Definir posições pela melhor nota": nota da posição; sem nota
-// cadastrada, entra como a pior possível e o desempate vira a nota geral.
-function posCompareScore(p, pos){
-  const posData = getPos(p);
-  const posNota = posData[pos];
-  return {
-    posNota: (posNota !== null && posNota !== undefined) ? posNota : -Infinity,
-    geral: p.index
-  };
+function joinNamesPt(names){
+  if(names.length <= 1) return names.join('');
+  return names.slice(0, -1).join(', ') + ' e ' + names[names.length - 1];
 }
-// true se `a` vence `b` na disputa pela posição (nota maior; empate decide a geral).
-function scoreBeats(a, b){
-  if(a.posNota !== b.posNota) return a.posNota > b.posNota;
-  return a.geral > b.geral;
+
+// Nota mínima pra uma nota de posição contar; abaixo disso (ou negativa) é
+// tratada como se não estivesse cadastrada.
+const MIN_VALID_POS_NOTA = 0.1;
+function validPosNota(p, pos){
+  const n = getPos(p)[pos];
+  return (n !== null && n !== undefined && n >= MIN_VALID_POS_NOTA) ? n : null;
+}
+// Nota de um jogador numa posição, com o mesmo critério usado em "Definir
+// posições pela melhor nota": quem tem nota cadastrada na posição (0,1 ou
+// mais) vence quem não tem, mesmo que a nota geral do outro seja maior. Só
+// cai pra nota geral quando os dois têm a mesma nota na posição, ou quando
+// nenhum dos dois tem nota cadastrada nela.
+function posDuelCompare(p1, p2, pos){
+  const n1 = validPosNota(p1, pos), n2 = validPosNota(p2, pos);
+  const v1 = n1 === null ? -Infinity : n1;
+  const v2 = n2 === null ? -Infinity : n2;
+  if(v1 !== v2) return v1 - v2;
+  return p1.index - p2.index;
+}
+// true se p1 vence p2 na disputa pela posição.
+function posDuelBeats(p1, p2, pos){
+  return posDuelCompare(p1, p2, pos) > 0;
 }
 
 function renderDefResult(){
@@ -2020,19 +2032,39 @@ function renderDefResult(){
         const counts = finalPositionCounts();
         if(counts[newPos] >= MAX_PER_POSITION){
           const candidate = roster.find(r=>r.id===id);
-          const candScore = posCompareScore(candidate, newPos);
           const occupants = selected
             .filter(sid => finalPositions[sid] === newPos)
-            .map(oid => ({ id: oid, player: roster.find(r=>r.id===oid) }))
-            .map(o => ({ ...o, score: posCompareScore(o.player, newPos) }));
-          const weakest = occupants.reduce((min, o) => scoreBeats(min.score, o.score) ? o : min, occupants[0]);
-          if(weakest && scoreBeats(candScore, weakest.score)){
-            bumpedId = weakest.id;
-            showToast(candidate.name + ' venceu ' + weakest.player.name + ' em ' + newPos + ' pela nota (simulação)');
-          } else if(weakest){
-            showToast('Posição ' + newPos + ' cheia — a nota de ' + weakest.player.name + ' aí é igual ou melhor, então ' + candidate.name + ' não venceria a vaga', true);
-            e.target.value = current;
-            return;
+            .map(oid => ({ id: oid, player: roster.find(r=>r.id===oid) }));
+          const weakest = occupants.reduce((min, o) => posDuelBeats(min.player, o.player, newPos) ? o : min, occupants[0]);
+          if(weakest){
+            const others = occupants.filter(o => o.id !== weakest.id);
+            const cmp = posDuelCompare(candidate, weakest.player, newPos);
+            if(cmp === 0){
+              // Empate mesmo depois do desempate pela nota geral: ninguém leva a vaga
+              // automaticamente — a posição do mais fraco fica em branco pra decisão manual.
+              delete finalPositions[weakest.id];
+              teams.forEach(t=>{
+                POSITIONS.forEach(slot=>{ if(t[slot] === weakest.id) t[slot] = null; });
+              });
+              await saveFinalPositions();
+              await saveTeams();
+              const safeNames = joinNamesPt(others.map(o => o.player.name));
+              showToast(candidate.name + ' e ' + weakest.player.name + ' empataram em ' + newPos + ' (mesma nota e mesma geral) — ' + safeNames + ' seguem garantidos, e a vaga de ' + weakest.player.name + ' ficou em branco pra você definir manualmente');
+              e.target.value = current;
+              renderDefResult();
+              renderTeams();
+              return;
+            }
+            if(cmp > 0){
+              bumpedId = weakest.id;
+              const winnersNames = joinNamesPt([candidate.name, ...others.map(o => o.player.name)]);
+              showToast(newPos + ' fica com ' + winnersNames + ' — ' + candidate.name + ' venceu ' + weakest.player.name + ' pela nota (simulação)');
+            } else {
+              const winnersNames = joinNamesPt([...others.map(o => o.player.name), weakest.player.name]);
+              showToast(newPos + ' já está com ' + winnersNames + ' — a nota deles aí é maior, então ' + candidate.name + ' não venceria a vaga');
+              e.target.value = current;
+              return;
+            }
           }
         }
       }
@@ -2088,8 +2120,8 @@ document.getElementById('autoDefineBtn').addEventListener('click', async ()=>{
     if(!roundCandidates.length) continue;
 
     roundCandidates.sort((a,b)=>{
-      const av = (a.posNota !== null && a.posNota !== undefined) ? a.posNota : -Infinity;
-      const bv = (b.posNota !== null && b.posNota !== undefined) ? b.posNota : -Infinity;
+      const av = (a.posNota !== null && a.posNota !== undefined && a.posNota >= MIN_VALID_POS_NOTA) ? a.posNota : -Infinity;
+      const bv = (b.posNota !== null && b.posNota !== undefined && b.posNota >= MIN_VALID_POS_NOTA) ? b.posNota : -Infinity;
       if(bv !== av) return bv - av;
       return b.geral - a.geral;
     });
