@@ -490,6 +490,29 @@
     line-height:1.35;
     white-space:normal;
   }
+  .pref-chip{
+    display:inline-block;
+    padding:1px 4px;
+    margin:1px 3px 1px 0;
+    border-radius:4px;
+  }
+  .pref-chip.pref-hit{
+    background:var(--green-bg);
+    border:1px solid var(--green-dark);
+    color:var(--green-dark);
+    font-weight:700;
+    font-size:9.5px;
+    padding:2px 5px;
+    border-radius:6px;
+  }
+  .def-status{
+    font-family:'Inter',sans-serif;
+    font-size:8px;
+    margin-top:2px;
+    line-height:1.3;
+  }
+  .def-status.manual{ color:var(--blue-dark); }
+  .def-status.none{ color:var(--coral-dark); }
   .def-result-row select{
     width:64px;
     min-width:0;
@@ -515,6 +538,12 @@
     background:var(--gold-bg);
     color:var(--gold-dark);
     border-radius:6px;
+  }
+  .def-prov-select.pref-hit{
+    border:1px solid var(--green-dark);
+    background:var(--green-bg);
+    color:var(--green-dark);
+    font-weight:700;
   }
   .pos-summary{
     display:grid;
@@ -911,7 +940,7 @@
 <script>
 const POSITIONS = ["LE","P1","P2","OP","CE","LI"];
 const TEAM_LABELS = ["Time A","Time B","Time C"];
-const APP_VERSION = "3.6";
+const APP_VERSION = "3.7";
 const DEFAULT_ACCESS_PIN = "times2026";
 const MASTER_RECOVERY_PIN = "recovery2026";
 const DEFAULT_ROSTER = [{"name": "CONVIDADO", "geral": 1, "pos": {"CE": null, "LE": null, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "RUPERT", "geral": 0.976, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": 0, "P1": 0, "P2": 1.447}}, {"name": "PAULO MATEUS", "geral": 1.748, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": null}}, {"name": "MATEUS", "geral": 1.222, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 0}}, {"name": "ANDRE", "geral": 2.816, "pos": {"CE": 0, "LE": 0, "LI": 0, "OP": null, "P1": 0, "P2": 0}}, {"name": "FERNANDO", "geral": 0.984, "pos": {"CE": 0, "LE": 0, "LI": null, "OP": 0.913, "P1": null, "P2": null}}, {"name": "ANDREY", "geral": 2.484, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 2.812}}, {"name": "HOLANDA", "geral": 1.719, "pos": {"CE": 0, "LE": 1.75, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "FELIPE", "geral": 2.099, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 0, "P1": 2.225, "P2": 2.036}}, {"name": "JOAO PEDRO", "geral": 2.012, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 2.284, "P2": 0}}, {"name": "JOAO ALVES", "geral": 2.184, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": 0, "P1": 2.63, "P2": 1.54}}, {"name": "LAERT", "geral": 1.44, "pos": {"CE": 0, "LE": 1.851, "LI": null, "OP": null, "P1": 0, "P2": 0}}, {"name": "REINALDO", "geral": 1.572, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 1.341, "P1": null, "P2": 0}}, {"name": "CARLOS", "geral": 1.833, "pos": {"CE": 0, "LE": null, "LI": 1.851, "OP": null, "P1": null, "P2": null}}, {"name": "TIMOTEO", "geral": 1.194, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "JAO", "geral": -1.667, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 0, "P1": null, "P2": null}}, {"name": "DANIEL", "geral": 2.144, "pos": {"CE": 0, "LE": 0, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "PATRICK", "geral": 1.566, "pos": {"CE": 0, "LE": 1.229, "LI": 0, "OP": 0, "P1": 2.278, "P2": 2.053}}, {"name": "BINHA", "geral": 2.355, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 0, "P1": 2.723, "P2": 2.234}}, {"name": "KAUA", "geral": 1.142, "pos": {"CE": 0, "LE": 0, "LI": 0, "OP": null, "P1": 0, "P2": null}}, {"name": "HIGOR", "geral": 1.738, "pos": {"CE": 0, "LE": 0, "LI": 0, "OP": 1.088, "P1": 2.058, "P2": 1.671}}, {"name": "GUSTAVO", "geral": 2.003, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": 0, "P1": 0, "P2": 1.896}}, {"name": "MARCOS", "geral": 0.865, "pos": {"CE": 1.022, "LE": null, "LI": null, "OP": 0.569, "P1": null, "P2": null}}, {"name": "ADALTON", "geral": 2.125, "pos": {"CE": 1.092, "LE": null, "LI": null, "OP": 1.569, "P1": 2.57, "P2": 2.516}}, {"name": "FELIPE ROCHA", "geral": 1.261, "pos": {"CE": 1.267, "LE": null, "LI": 0, "OP": 1.236, "P1": 0, "P2": 0}}, {"name": "THIAGO", "geral": 1.496, "pos": {"CE": 1.667, "LE": 1.362, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "JORGE", "geral": 1.621, "pos": {"CE": 1.788, "LE": 1.331, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "GABRIEL", "geral": 1.751, "pos": {"CE": 1.942, "LE": 0, "LI": 1.203, "OP": 0, "P1": 0, "P2": 0}}, {"name": "RIAN", "geral": 3.86, "pos": {"CE": 3.86, "LE": null, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "WEUDESON", "geral": 1.746, "pos": {"CE": null, "LE": 0, "LI": 1.763, "OP": null, "P1": 0, "P2": 0}}, {"name": "DUARTE", "geral": 2.021, "pos": {"CE": null, "LE": 0, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "RANGEL", "geral": 1.782, "pos": {"CE": null, "LE": 0, "LI": 1.606, "OP": null, "P1": null, "P2": 0}}, {"name": "JOAO VITOR", "geral": 1.079, "pos": {"CE": null, "LE": 1.575, "LI": null, "OP": 0, "P1": null, "P2": 0}}, {"name": "SALGADO", "geral": 1.908, "pos": {"CE": null, "LE": 1.97, "LI": 0, "OP": null, "P1": 0, "P2": 0}}, {"name": "HENRIQUE", "geral": 0.651, "pos": {"CE": null, "LE": null, "LI": 0, "OP": 0.555, "P1": null, "P2": null}}, {"name": "IUKI", "geral": 0.549, "pos": {"CE": null, "LE": null, "LI": 0, "OP": 0, "P1": 0, "P2": null}}, {"name": "LUIZ FERNANDO", "geral": 1.491, "pos": {"CE": null, "LE": null, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "GARAY", "geral": 1.593, "pos": {"CE": null, "LE": null, "LI": 1.671, "OP": 0, "P1": null, "P2": 0}}, {"name": "WELTON", "geral": -0.125, "pos": {"CE": null, "LE": null, "LI": null, "OP": 0, "P1": null, "P2": null}}, {"name": "ADENILSON", "geral": 1.491, "pos": {"CE": null, "LE": null, "LI": null, "OP": 1.364, "P1": 0, "P2": 0}}, {"name": "VINY", "geral": 2.433, "pos": {"CE": null, "LE": null, "LI": null, "OP": 2.304, "P1": 0, "P2": 0}}, {"name": "LUIZ FELIPE", "geral": 2.362, "pos": {"CE": null, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 0}}, {"name": "PEDRO", "geral": 2.743, "pos": {"CE": null, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 0}}];
@@ -1909,18 +1938,31 @@ function renderDefResult(){
     const rawPrefs = getPersonPositions(p.id);
     let prefsHtml;
     if(rawPrefs.length){
-      const prefsText = rawPrefs.map((pos, i) => (i+1) + 'º ' + pos).join(' · ');
-      prefsHtml = `<div class="def-prefs">${escapeHtml(prefsText)}</div>`;
+      const matchIdx = current ? rawPrefs.indexOf(current) : -1;
+      const chips = rawPrefs.map((pos, i) => {
+        const hit = i === matchIdx;
+        return `<span class="pref-chip${hit ? ' pref-hit' : ''}">${i+1}º ${escapeHtml(pos)}</span>`;
+      }).join('');
+      let statusHtml = '';
+      if(current && matchIdx < 0){
+        statusHtml = `<div class="def-status manual">Definido manualmente em ${escapeHtml(current)}, fora da preferência</div>`;
+      } else if(!current){
+        statusHtml = `<div class="def-status none">Não conseguiu vaga em nenhuma preferência</div>`;
+      }
+      prefsHtml = `<div class="def-prefs">${chips}</div>${statusHtml}`;
     } else {
       const provPref = provisionalPositions[p.id] || '';
       const provOptions = ['<option value="">Sem preferência</option>']
         .concat(POSITION_OPTIONS.map(opt => `<option value="${opt}" ${opt===provPref?'selected':''}>${opt}</option>`))
         .join('');
+      const hit = current && provPref && current === provPref;
+      const manual = current && (!provPref || current !== provPref);
       prefsHtml = `
         <div class="def-prefs def-prov-wrap">
           <span class="def-prov-label">Sem marcação — provisória (só simulação):</span>
-          <select data-prov-id="${p.id}" class="def-prov-select">${provOptions}</select>
-        </div>`;
+          <select data-prov-id="${p.id}" class="def-prov-select${hit ? ' pref-hit' : ''}">${provOptions}</select>
+        </div>
+        ${manual ? `<div class="def-status manual">Definido manualmente em ${escapeHtml(current)}</div>` : ''}`;
     }
     return `
       <div class="def-result-row">
