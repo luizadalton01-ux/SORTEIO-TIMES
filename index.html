@@ -487,15 +487,34 @@
     font-family:'Roboto Mono',monospace;
     font-size:8.5px;
     color:var(--ink-faint);
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
+    line-height:1.35;
+    white-space:normal;
   }
   .def-result-row select{
     width:64px;
     min-width:0;
     padding:4px 2px;
     font-size:10px;
+  }
+  .def-prov-wrap{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    flex-wrap:wrap;
+  }
+  .def-prov-label{
+    color:var(--gold-dark);
+    font-family:'Inter',sans-serif;
+    font-size:8.5px;
+  }
+  .def-prov-select{
+    font-family:'Roboto Mono',monospace;
+    font-size:9.5px;
+    padding:2px 4px;
+    border:1px solid var(--gold);
+    background:var(--gold-bg);
+    color:var(--gold-dark);
+    border-radius:6px;
   }
   .pos-summary{
     display:grid;
@@ -800,7 +819,16 @@
           <p class="section-label" style="margin-top:0;">Adicionar jogador</p>
           <div class="row">
             <input type="text" id="newName" placeholder="Nome">
-            <input type="number" id="newIndex" placeholder="Índice" step="0.01">
+            <input type="number" id="newIndex" placeholder="Índice geral" step="0.01">
+          </div>
+          <p class="hint" style="margin:0 0 6px;">Notas por posição (opcional):</p>
+          <div class="pos-nota-grid" id="newPosNotaGrid" style="padding:0 0 10px;">
+            <div class="pos-nota"><label>CE</label><input type="number" step="0.01" id="newPosCE" placeholder="–"></div>
+            <div class="pos-nota"><label>LE</label><input type="number" step="0.01" id="newPosLE" placeholder="–"></div>
+            <div class="pos-nota"><label>LI</label><input type="number" step="0.01" id="newPosLI" placeholder="–"></div>
+            <div class="pos-nota"><label>OP</label><input type="number" step="0.01" id="newPosOP" placeholder="–"></div>
+            <div class="pos-nota"><label>P1</label><input type="number" step="0.01" id="newPosP1" placeholder="–"></div>
+            <div class="pos-nota"><label>P2</label><input type="number" step="0.01" id="newPosP2" placeholder="–"></div>
           </div>
           <button class="primary" id="addPlayerBtn">Adicionar ao elenco</button>
         </div>
@@ -836,7 +864,7 @@
 
     <button class="primary" id="autoDefineBtn">Definir posições pela melhor nota</button>
     <button class="ghost" id="clearFinalPositionsBtn" style="width:100%; margin-top:8px;">Limpar posições</button>
-    <p class="hint" style="margin-top:8px;">Cada convocado tenta primeiro a sua 1ª opção marcada em Convocados; só passa pra 2ª, 3ª... se não conseguir vaga na anterior. Quando duas pessoas disputam a mesma posição na mesma preferência (até 3 vagas), quem tem a maior nota naquela posição leva a vaga; sem nota cadastrada, o desempate é pela nota geral.</p>
+    <p class="hint" style="margin-top:8px;">Cada convocado tenta primeiro a sua 1ª opção marcada em Convocados; só passa pra 2ª, 3ª... se não conseguir vaga na anterior. Quando duas pessoas disputam a mesma posição na mesma preferência (até 3 vagas), quem tem a maior nota naquela posição leva a vaga; sem nota cadastrada, o desempate é pela nota geral. Quem não tem nenhuma preferência marcada em Convocados aparece abaixo com um campo para escolher uma posição provisória — vale só para essa simulação e não é salva em Convocados.</p>
 
     <p class="section-label" id="defResultLabel" style="display:none;">Posição de cada convocado</p>
     <p class="hint" id="defResultHint" style="display:none; margin:-8px 0 10px;">A posição de cada um pode ser ajustada manualmente aqui a qualquer momento.</p>
@@ -883,7 +911,7 @@
 <script>
 const POSITIONS = ["LE","P1","P2","OP","CE","LI"];
 const TEAM_LABELS = ["Time A","Time B","Time C"];
-const APP_VERSION = "3.4";
+const APP_VERSION = "3.6";
 const DEFAULT_ACCESS_PIN = "times2026";
 const MASTER_RECOVERY_PIN = "recovery2026";
 const DEFAULT_ROSTER = [{"name": "CONVIDADO", "geral": 1, "pos": {"CE": null, "LE": null, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "RUPERT", "geral": 0.976, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": 0, "P1": 0, "P2": 1.447}}, {"name": "PAULO MATEUS", "geral": 1.748, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": null}}, {"name": "MATEUS", "geral": 1.222, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 0}}, {"name": "ANDRE", "geral": 2.816, "pos": {"CE": 0, "LE": 0, "LI": 0, "OP": null, "P1": 0, "P2": 0}}, {"name": "FERNANDO", "geral": 0.984, "pos": {"CE": 0, "LE": 0, "LI": null, "OP": 0.913, "P1": null, "P2": null}}, {"name": "ANDREY", "geral": 2.484, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 2.812}}, {"name": "HOLANDA", "geral": 1.719, "pos": {"CE": 0, "LE": 1.75, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "FELIPE", "geral": 2.099, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 0, "P1": 2.225, "P2": 2.036}}, {"name": "JOAO PEDRO", "geral": 2.012, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 2.284, "P2": 0}}, {"name": "JOAO ALVES", "geral": 2.184, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": 0, "P1": 2.63, "P2": 1.54}}, {"name": "LAERT", "geral": 1.44, "pos": {"CE": 0, "LE": 1.851, "LI": null, "OP": null, "P1": 0, "P2": 0}}, {"name": "REINALDO", "geral": 1.572, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 1.341, "P1": null, "P2": 0}}, {"name": "CARLOS", "geral": 1.833, "pos": {"CE": 0, "LE": null, "LI": 1.851, "OP": null, "P1": null, "P2": null}}, {"name": "TIMOTEO", "geral": 1.194, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "JAO", "geral": -1.667, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 0, "P1": null, "P2": null}}, {"name": "DANIEL", "geral": 2.144, "pos": {"CE": 0, "LE": 0, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "PATRICK", "geral": 1.566, "pos": {"CE": 0, "LE": 1.229, "LI": 0, "OP": 0, "P1": 2.278, "P2": 2.053}}, {"name": "BINHA", "geral": 2.355, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 0, "P1": 2.723, "P2": 2.234}}, {"name": "KAUA", "geral": 1.142, "pos": {"CE": 0, "LE": 0, "LI": 0, "OP": null, "P1": 0, "P2": null}}, {"name": "HIGOR", "geral": 1.738, "pos": {"CE": 0, "LE": 0, "LI": 0, "OP": 1.088, "P1": 2.058, "P2": 1.671}}, {"name": "GUSTAVO", "geral": 2.003, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": 0, "P1": 0, "P2": 1.896}}, {"name": "MARCOS", "geral": 0.865, "pos": {"CE": 1.022, "LE": null, "LI": null, "OP": 0.569, "P1": null, "P2": null}}, {"name": "ADALTON", "geral": 2.125, "pos": {"CE": 1.092, "LE": null, "LI": null, "OP": 1.569, "P1": 2.57, "P2": 2.516}}, {"name": "FELIPE ROCHA", "geral": 1.261, "pos": {"CE": 1.267, "LE": null, "LI": 0, "OP": 1.236, "P1": 0, "P2": 0}}, {"name": "THIAGO", "geral": 1.496, "pos": {"CE": 1.667, "LE": 1.362, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "JORGE", "geral": 1.621, "pos": {"CE": 1.788, "LE": 1.331, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "GABRIEL", "geral": 1.751, "pos": {"CE": 1.942, "LE": 0, "LI": 1.203, "OP": 0, "P1": 0, "P2": 0}}, {"name": "RIAN", "geral": 3.86, "pos": {"CE": 3.86, "LE": null, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "WEUDESON", "geral": 1.746, "pos": {"CE": null, "LE": 0, "LI": 1.763, "OP": null, "P1": 0, "P2": 0}}, {"name": "DUARTE", "geral": 2.021, "pos": {"CE": null, "LE": 0, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "RANGEL", "geral": 1.782, "pos": {"CE": null, "LE": 0, "LI": 1.606, "OP": null, "P1": null, "P2": 0}}, {"name": "JOAO VITOR", "geral": 1.079, "pos": {"CE": null, "LE": 1.575, "LI": null, "OP": 0, "P1": null, "P2": 0}}, {"name": "SALGADO", "geral": 1.908, "pos": {"CE": null, "LE": 1.97, "LI": 0, "OP": null, "P1": 0, "P2": 0}}, {"name": "HENRIQUE", "geral": 0.651, "pos": {"CE": null, "LE": null, "LI": 0, "OP": 0.555, "P1": null, "P2": null}}, {"name": "IUKI", "geral": 0.549, "pos": {"CE": null, "LE": null, "LI": 0, "OP": 0, "P1": 0, "P2": null}}, {"name": "LUIZ FERNANDO", "geral": 1.491, "pos": {"CE": null, "LE": null, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "GARAY", "geral": 1.593, "pos": {"CE": null, "LE": null, "LI": 1.671, "OP": 0, "P1": null, "P2": 0}}, {"name": "WELTON", "geral": -0.125, "pos": {"CE": null, "LE": null, "LI": null, "OP": 0, "P1": null, "P2": null}}, {"name": "ADENILSON", "geral": 1.491, "pos": {"CE": null, "LE": null, "LI": null, "OP": 1.364, "P1": 0, "P2": 0}}, {"name": "VINY", "geral": 2.433, "pos": {"CE": null, "LE": null, "LI": null, "OP": 2.304, "P1": 0, "P2": 0}}, {"name": "LUIZ FELIPE", "geral": 2.362, "pos": {"CE": null, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 0}}, {"name": "PEDRO", "geral": 2.743, "pos": {"CE": null, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 0}}];
@@ -891,6 +919,10 @@ const DEFAULT_ROSTER = [{"name": "CONVIDADO", "geral": 1, "pos": {"CE": null, "L
 let roster = [];
 let selected = [];
 let positions = {};
+// Preferências provisórias, só para simulação na aba "Definição de posições":
+// usadas apenas por quem não tem preferência marcada em Convocados. Não são
+// persistidas (somem ao recarregar) e nunca sobrescrevem `positions`.
+let provisionalPositions = {};
 let finalPositions = {};
 let teams = emptyTeams();
 let unlocked = false;
@@ -1496,6 +1528,7 @@ function renderRoster(){
       selected = selected.filter(sid=>sid!==id);
       delete positions[id];
       delete finalPositions[id];
+      delete provisionalPositions[id];
       teams.forEach(t=>{ POSITIONS.forEach(pos=>{ if(t[pos]===id) t[pos]=null; }); });
       await saveRoster();
       await saveSelected();
@@ -1518,11 +1551,25 @@ document.getElementById('addPlayerBtn').addEventListener('click', async ()=>{
   const name = nameEl.value.trim();
   const idx = parseFloat(idxEl.value);
   if(!name){ showToast('Digite um nome'); return; }
-  if(isNaN(idx)){ showToast('Digite um índice válido'); return; }
-  roster.push({id: uid(), name, index: idx, pos: emptyPos()});
+  if(isNaN(idx)){ showToast('Digite um índice geral válido'); return; }
+
+  const pos = emptyPos();
+  POSITION_OPTIONS.forEach(code => {
+    const el = document.getElementById('newPos' + code);
+    if(el){
+      const raw = el.value.trim();
+      pos[code] = raw === '' ? null : parseFloat(raw);
+    }
+  });
+
+  roster.push({id: uid(), name, index: idx, pos});
   await saveRoster();
   nameEl.value = '';
   idxEl.value = '';
+  POSITION_OPTIONS.forEach(code => {
+    const el = document.getElementById('newPos' + code);
+    if(el) el.value = '';
+  });
   renderRoster();
   showToast('Jogador adicionado');
 });
@@ -1655,6 +1702,16 @@ function getPersonPositions(id){
   return Array.isArray(v) ? v : (v ? [v] : []);
 }
 
+// Preferência efetiva para a simulação em "Definição de posições": usa a
+// marcação real de Convocados; só recorre à provisória quando não há
+// nenhuma marcação real para a pessoa.
+function getEffectivePositions(id){
+  const real = getPersonPositions(id);
+  if(real.length) return real;
+  const prov = provisionalPositions[id];
+  return prov ? [prov] : [];
+}
+
 function positionCounts(){
   const counts = {};
   POSITION_OPTIONS.forEach(p => counts[p] = 0);
@@ -1729,6 +1786,7 @@ function renderConvocados(){
       }else{
         selected = selected.filter(sid=>sid!==id);
         delete finalPositions[id];
+        delete provisionalPositions[id];
         teams.forEach(t=>{ POSITIONS.forEach(pos=>{ if(t[pos]===id) t[pos]=null; }); });
         await saveTeams();
         await saveFinalPositions();
@@ -1755,7 +1813,7 @@ function renderConvocados(){
         }
         tags = [...tags, pos];
       }
-      if(tags.length){ positions[id] = tags; } else { delete positions[id]; }
+      if(tags.length){ positions[id] = tags; delete provisionalPositions[id]; } else { delete positions[id]; }
       if(finalPositions[id] && !tags.includes(finalPositions[id])){
         delete finalPositions[id];
         await saveFinalPositions();
@@ -1785,6 +1843,7 @@ document.getElementById('convNoneBtn').addEventListener('click', async ()=>{
   selected = [];
   positions = {};
   finalPositions = {};
+  provisionalPositions = {};
   teams = emptyTeams();
   await saveSelected();
   await savePositions();
@@ -1848,18 +1907,41 @@ function renderDefResult(){
       .concat(availableOpts.map(opt => `<option value="${opt}" ${opt===current?'selected':''}>${opt}</option>`))
       .join('');
     const rawPrefs = getPersonPositions(p.id);
-    const prefsText = rawPrefs.length ? rawPrefs.join(' · ') : 'sem marcação';
+    let prefsHtml;
+    if(rawPrefs.length){
+      const prefsText = rawPrefs.map((pos, i) => (i+1) + 'º ' + pos).join(' · ');
+      prefsHtml = `<div class="def-prefs">${escapeHtml(prefsText)}</div>`;
+    } else {
+      const provPref = provisionalPositions[p.id] || '';
+      const provOptions = ['<option value="">Sem preferência</option>']
+        .concat(POSITION_OPTIONS.map(opt => `<option value="${opt}" ${opt===provPref?'selected':''}>${opt}</option>`))
+        .join('');
+      prefsHtml = `
+        <div class="def-prefs def-prov-wrap">
+          <span class="def-prov-label">Sem marcação — provisória (só simulação):</span>
+          <select data-prov-id="${p.id}" class="def-prov-select">${provOptions}</select>
+        </div>`;
+    }
     return `
       <div class="def-result-row">
         <div class="jersey ${current ? 'pos-set' : ''}">${current || '–'}</div>
         <div class="def-name-block">
           <div class="player-name">${escapeHtml(p.name)}</div>
-          <div class="def-prefs">${escapeHtml(prefsText)}</div>
+          ${prefsHtml}
         </div>
         <select data-final-id="${p.id}" class="def-manual-select">${options}</select>
       </div>
     `;
   }).join('');
+
+  list.querySelectorAll('.def-prov-select').forEach(sel=>{
+    sel.addEventListener('change', (e)=>{
+      const id = e.target.dataset.provId;
+      const val = e.target.value;
+      if(val){ provisionalPositions[id] = val; } else { delete provisionalPositions[id]; }
+      showToast(val ? 'Preferência provisória definida (só afeta a simulação)' : 'Preferência provisória removida');
+    });
+  });
 
   list.querySelectorAll('.def-manual-select').forEach(sel=>{
     sel.addEventListener('change', async (e)=>{
@@ -1894,11 +1976,11 @@ document.getElementById('autoDefineBtn').addEventListener('click', async ()=>{
     return;
   }
 
-  if(!convocados.some(p => getPersonPositions(p.id).length)){
-    showToast('Nenhum convocado tem posição marcada em Convocados');
+  if(!convocados.some(p => getEffectivePositions(p.id).length)){
+    showToast('Nenhum convocado tem posição marcada em Convocados (nem provisória)');
     return;
   }
-  if(!(await showConfirm('Isso vai redefinir a posição de cada convocado. Cada um tenta primeiro a sua 1ª opção marcada em Convocados, depois a 2ª, e assim por diante; a nota (e a nota geral no empate) só decide quando duas pessoas disputam a mesma opção de preferência. As preferências marcadas em Convocados não são apagadas. Continuar?'))) return;
+  if(!(await showConfirm('Isso vai redefinir a posição de cada convocado. Cada um tenta primeiro a sua 1ª opção marcada em Convocados, depois a 2ª, e assim por diante (quem não tem marcação usa a preferência provisória, se definida); a nota (e a nota geral no empate) só decide quando duas pessoas disputam a mesma opção de preferência. As preferências marcadas em Convocados não são apagadas. Continuar?'))) return;
 
   const capacity = {};
   POSITION_OPTIONS.forEach(pos => capacity[pos] = MAX_PER_POSITION);
@@ -1912,7 +1994,7 @@ document.getElementById('autoDefineBtn').addEventListener('click', async ()=>{
     const roundCandidates = [];
     convocados.forEach(p => {
       if(assigned[p.id]) return;
-      const prefs = getPersonPositions(p.id);
+      const prefs = getEffectivePositions(p.id);
       const pos = prefs[round];
       if(!pos) return;
       const posData = getPos(p);
