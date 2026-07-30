@@ -452,9 +452,8 @@
     color:#fff;
   }
   #defResultList{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:5px 6px;
+    columns:2;
+    column-gap:6px;
   }
   .def-result-row{
     display:flex;
@@ -465,6 +464,8 @@
     border-radius:9px;
     padding:5px 6px;
     min-width:0;
+    break-inside:avoid;
+    margin-bottom:5px;
   }
   .def-result-row .jersey{
     width:26px; height:26px; min-width:26px;
@@ -909,10 +910,7 @@
 
     <button class="primary" id="autoDefineBtn">Definir posições pela melhor nota</button>
     <button class="ghost" id="clearFinalPositionsBtn" style="width:100%; margin-top:8px;">Limpar posições</button>
-    <p class="hint" style="margin-top:8px;">Cada convocado tenta primeiro a sua 1ª opção marcada em Convocados; só passa pra 2ª, 3ª... se não conseguir vaga na anterior. Quando duas pessoas disputam a mesma posição na mesma preferência (até 3 vagas), quem tem a maior nota naquela posição leva a vaga; sem nota cadastrada, o desempate é pela nota geral. Quem não tem nenhuma preferência marcada em Convocados aparece abaixo com um campo para escolher uma posição provisória — vale só para essa simulação e não é salva em Convocados.</p>
 
-    <p class="section-label" id="defResultLabel" style="display:none;">Posição de cada convocado</p>
-    <p class="hint" id="defResultHint" style="display:none; margin:-8px 0 10px;">A posição de cada um pode ser ajustada manualmente aqui a qualquer momento. Se a posição já estiver cheia, dá pra escolher outro jogador mesmo assim: quem tem nota cadastrada na posição (0,1 ou mais) vence quem não tem, mesmo com nota geral menor; se os dois tiverem a mesma nota na posição (ou nenhum tiver), quem decide é a nota geral; se ainda empatar, a vaga do mais fraco fica em branco pra você decidir manualmente.</p>
     <div id="defResultList"></div>
     <div id="defMissingSummary"></div>
   </section>
@@ -957,7 +955,7 @@
 <script>
 const POSITIONS = ["LE","P1","P2","OP","CE","LI"];
 const TEAM_LABELS = ["Time A","Time B","Time C"];
-const APP_VERSION = "3.22";
+const APP_VERSION = "3.25";
 const DEFAULT_ACCESS_PIN = "times2026";
 const MASTER_RECOVERY_PIN = "recovery2026";
 const DEFAULT_ROSTER = [{"name": "CONVIDADO", "geral": 1, "pos": {"CE": null, "LE": null, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "RUPERT", "geral": 0.976, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": 0, "P1": 0, "P2": 1.447}}, {"name": "PAULO MATEUS", "geral": 1.748, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": null}}, {"name": "MATEUS", "geral": 1.222, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 0}}, {"name": "ANDRE", "geral": 2.816, "pos": {"CE": 0, "LE": 0, "LI": 0, "OP": null, "P1": 0, "P2": 0}}, {"name": "FERNANDO", "geral": 0.984, "pos": {"CE": 0, "LE": 0, "LI": null, "OP": 0.913, "P1": null, "P2": null}}, {"name": "ANDREY", "geral": 2.484, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 2.812}}, {"name": "HOLANDA", "geral": 1.719, "pos": {"CE": 0, "LE": 1.75, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "FELIPE", "geral": 2.099, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 0, "P1": 2.225, "P2": 2.036}}, {"name": "JOAO PEDRO", "geral": 2.012, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 2.284, "P2": 0}}, {"name": "JOAO ALVES", "geral": 2.184, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": 0, "P1": 2.63, "P2": 1.54}}, {"name": "LAERT", "geral": 1.44, "pos": {"CE": 0, "LE": 1.851, "LI": null, "OP": null, "P1": 0, "P2": 0}}, {"name": "REINALDO", "geral": 1.572, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 1.341, "P1": null, "P2": 0}}, {"name": "CARLOS", "geral": 1.833, "pos": {"CE": 0, "LE": null, "LI": 1.851, "OP": null, "P1": null, "P2": null}}, {"name": "TIMOTEO", "geral": 1.194, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "JAO", "geral": -1.667, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 0, "P1": null, "P2": null}}, {"name": "DANIEL", "geral": 2.144, "pos": {"CE": 0, "LE": 0, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "PATRICK", "geral": 1.566, "pos": {"CE": 0, "LE": 1.229, "LI": 0, "OP": 0, "P1": 2.278, "P2": 2.053}}, {"name": "BINHA", "geral": 2.355, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 0, "P1": 2.723, "P2": 2.234}}, {"name": "KAUA", "geral": 1.142, "pos": {"CE": 0, "LE": 0, "LI": 0, "OP": null, "P1": 0, "P2": null}}, {"name": "HIGOR", "geral": 1.738, "pos": {"CE": 0, "LE": 0, "LI": 0, "OP": 1.088, "P1": 2.058, "P2": 1.671}}, {"name": "GUSTAVO", "geral": 2.003, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": 0, "P1": 0, "P2": 1.896}}, {"name": "MARCOS", "geral": 0.865, "pos": {"CE": 1.022, "LE": null, "LI": null, "OP": 0.569, "P1": null, "P2": null}}, {"name": "ADALTON", "geral": 2.125, "pos": {"CE": 1.092, "LE": null, "LI": null, "OP": 1.569, "P1": 2.57, "P2": 2.516}}, {"name": "FELIPE ROCHA", "geral": 1.261, "pos": {"CE": 1.267, "LE": null, "LI": 0, "OP": 1.236, "P1": 0, "P2": 0}}, {"name": "THIAGO", "geral": 1.496, "pos": {"CE": 1.667, "LE": 1.362, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "JORGE", "geral": 1.621, "pos": {"CE": 1.788, "LE": 1.331, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "GABRIEL", "geral": 1.751, "pos": {"CE": 1.942, "LE": 0, "LI": 1.203, "OP": 0, "P1": 0, "P2": 0}}, {"name": "RIAN", "geral": 3.86, "pos": {"CE": 3.86, "LE": null, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "WEUDESON", "geral": 1.746, "pos": {"CE": null, "LE": 0, "LI": 1.763, "OP": null, "P1": 0, "P2": 0}}, {"name": "DUARTE", "geral": 2.021, "pos": {"CE": null, "LE": 0, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "RANGEL", "geral": 1.782, "pos": {"CE": null, "LE": 0, "LI": 1.606, "OP": null, "P1": null, "P2": 0}}, {"name": "JOAO VITOR", "geral": 1.079, "pos": {"CE": null, "LE": 1.575, "LI": null, "OP": 0, "P1": null, "P2": 0}}, {"name": "SALGADO", "geral": 1.908, "pos": {"CE": null, "LE": 1.97, "LI": 0, "OP": null, "P1": 0, "P2": 0}}, {"name": "HENRIQUE", "geral": 0.651, "pos": {"CE": null, "LE": null, "LI": 0, "OP": 0.555, "P1": null, "P2": null}}, {"name": "IUKI", "geral": 0.549, "pos": {"CE": null, "LE": null, "LI": 0, "OP": 0, "P1": 0, "P2": null}}, {"name": "LUIZ FERNANDO", "geral": 1.491, "pos": {"CE": null, "LE": null, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "GARAY", "geral": 1.593, "pos": {"CE": null, "LE": null, "LI": 1.671, "OP": 0, "P1": null, "P2": 0}}, {"name": "WELTON", "geral": -0.125, "pos": {"CE": null, "LE": null, "LI": null, "OP": 0, "P1": null, "P2": null}}, {"name": "ADENILSON", "geral": 1.491, "pos": {"CE": null, "LE": null, "LI": null, "OP": 1.364, "P1": 0, "P2": 0}}, {"name": "VINY", "geral": 2.433, "pos": {"CE": null, "LE": null, "LI": null, "OP": 2.304, "P1": 0, "P2": 0}}, {"name": "LUIZ FELIPE", "geral": 2.362, "pos": {"CE": null, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 0}}, {"name": "PEDRO", "geral": 2.743, "pos": {"CE": null, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 0}}];
@@ -1955,20 +1953,14 @@ function posDuelBeats(p1, p2, pos){
 }
 
 function renderDefResult(){
-  const label = document.getElementById('defResultLabel');
-  const hint = document.getElementById('defResultHint');
   const list = document.getElementById('defResultList');
   const convocados = roster.filter(p => selected.includes(p.id));
 
   if(!convocados.length){
-    label.style.display = 'none';
-    hint.style.display = 'none';
     list.innerHTML = '';
     document.getElementById('defMissingSummary').innerHTML = '';
     return;
   }
-  label.style.display = 'block';
-  hint.style.display = 'block';
 
   const sorted = [...convocados].sort((a,b)=>{
     const ap = finalPositions[a.id], bp = finalPositions[b.id];
