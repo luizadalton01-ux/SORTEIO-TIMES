@@ -955,7 +955,7 @@
 <script>
 const POSITIONS = ["LE","P1","P2","OP","CE","LI"];
 const TEAM_LABELS = ["Time A","Time B","Time C"];
-const APP_VERSION = "3.26";
+const APP_VERSION = "3.28";
 const DEFAULT_ACCESS_PIN = "times2026";
 const MASTER_RECOVERY_PIN = "recovery2026";
 const DEFAULT_ROSTER = [{"name": "CONVIDADO", "geral": 1, "pos": {"CE": null, "LE": null, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "RUPERT", "geral": 0.976, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": 0, "P1": 0, "P2": 1.447}}, {"name": "PAULO MATEUS", "geral": 1.748, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": null}}, {"name": "MATEUS", "geral": 1.222, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 0}}, {"name": "ANDRE", "geral": 2.816, "pos": {"CE": 0, "LE": 0, "LI": 0, "OP": null, "P1": 0, "P2": 0}}, {"name": "FERNANDO", "geral": 0.984, "pos": {"CE": 0, "LE": 0, "LI": null, "OP": 0.913, "P1": null, "P2": null}}, {"name": "ANDREY", "geral": 2.484, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 2.812}}, {"name": "HOLANDA", "geral": 1.719, "pos": {"CE": 0, "LE": 1.75, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "FELIPE", "geral": 2.099, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 0, "P1": 2.225, "P2": 2.036}}, {"name": "JOAO PEDRO", "geral": 2.012, "pos": {"CE": 0, "LE": null, "LI": null, "OP": null, "P1": 2.284, "P2": 0}}, {"name": "JOAO ALVES", "geral": 2.184, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": 0, "P1": 2.63, "P2": 1.54}}, {"name": "LAERT", "geral": 1.44, "pos": {"CE": 0, "LE": 1.851, "LI": null, "OP": null, "P1": 0, "P2": 0}}, {"name": "REINALDO", "geral": 1.572, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 1.341, "P1": null, "P2": 0}}, {"name": "CARLOS", "geral": 1.833, "pos": {"CE": 0, "LE": null, "LI": 1.851, "OP": null, "P1": null, "P2": null}}, {"name": "TIMOTEO", "geral": 1.194, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "JAO", "geral": -1.667, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 0, "P1": null, "P2": null}}, {"name": "DANIEL", "geral": 2.144, "pos": {"CE": 0, "LE": 0, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "PATRICK", "geral": 1.566, "pos": {"CE": 0, "LE": 1.229, "LI": 0, "OP": 0, "P1": 2.278, "P2": 2.053}}, {"name": "BINHA", "geral": 2.355, "pos": {"CE": 0, "LE": null, "LI": null, "OP": 0, "P1": 2.723, "P2": 2.234}}, {"name": "KAUA", "geral": 1.142, "pos": {"CE": 0, "LE": 0, "LI": 0, "OP": null, "P1": 0, "P2": null}}, {"name": "HIGOR", "geral": 1.738, "pos": {"CE": 0, "LE": 0, "LI": 0, "OP": 1.088, "P1": 2.058, "P2": 1.671}}, {"name": "GUSTAVO", "geral": 2.003, "pos": {"CE": 0, "LE": null, "LI": 0, "OP": 0, "P1": 0, "P2": 1.896}}, {"name": "MARCOS", "geral": 0.865, "pos": {"CE": 1.022, "LE": null, "LI": null, "OP": 0.569, "P1": null, "P2": null}}, {"name": "ADALTON", "geral": 2.125, "pos": {"CE": 1.092, "LE": null, "LI": null, "OP": 1.569, "P1": 2.57, "P2": 2.516}}, {"name": "FELIPE ROCHA", "geral": 1.261, "pos": {"CE": 1.267, "LE": null, "LI": 0, "OP": 1.236, "P1": 0, "P2": 0}}, {"name": "THIAGO", "geral": 1.496, "pos": {"CE": 1.667, "LE": 1.362, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "JORGE", "geral": 1.621, "pos": {"CE": 1.788, "LE": 1.331, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "GABRIEL", "geral": 1.751, "pos": {"CE": 1.942, "LE": 0, "LI": 1.203, "OP": 0, "P1": 0, "P2": 0}}, {"name": "RIAN", "geral": 3.86, "pos": {"CE": 3.86, "LE": null, "LI": null, "OP": null, "P1": null, "P2": null}}, {"name": "WEUDESON", "geral": 1.746, "pos": {"CE": null, "LE": 0, "LI": 1.763, "OP": null, "P1": 0, "P2": 0}}, {"name": "DUARTE", "geral": 2.021, "pos": {"CE": null, "LE": 0, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "RANGEL", "geral": 1.782, "pos": {"CE": null, "LE": 0, "LI": 1.606, "OP": null, "P1": null, "P2": 0}}, {"name": "JOAO VITOR", "geral": 1.079, "pos": {"CE": null, "LE": 1.575, "LI": null, "OP": 0, "P1": null, "P2": 0}}, {"name": "SALGADO", "geral": 1.908, "pos": {"CE": null, "LE": 1.97, "LI": 0, "OP": null, "P1": 0, "P2": 0}}, {"name": "HENRIQUE", "geral": 0.651, "pos": {"CE": null, "LE": null, "LI": 0, "OP": 0.555, "P1": null, "P2": null}}, {"name": "IUKI", "geral": 0.549, "pos": {"CE": null, "LE": null, "LI": 0, "OP": 0, "P1": 0, "P2": null}}, {"name": "LUIZ FERNANDO", "geral": 1.491, "pos": {"CE": null, "LE": null, "LI": 0, "OP": null, "P1": null, "P2": null}}, {"name": "GARAY", "geral": 1.593, "pos": {"CE": null, "LE": null, "LI": 1.671, "OP": 0, "P1": null, "P2": 0}}, {"name": "WELTON", "geral": -0.125, "pos": {"CE": null, "LE": null, "LI": null, "OP": 0, "P1": null, "P2": null}}, {"name": "ADENILSON", "geral": 1.491, "pos": {"CE": null, "LE": null, "LI": null, "OP": 1.364, "P1": 0, "P2": 0}}, {"name": "VINY", "geral": 2.433, "pos": {"CE": null, "LE": null, "LI": null, "OP": 2.304, "P1": 0, "P2": 0}}, {"name": "LUIZ FELIPE", "geral": 2.362, "pos": {"CE": null, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 0}}, {"name": "PEDRO", "geral": 2.743, "pos": {"CE": null, "LE": null, "LI": null, "OP": null, "P1": 0, "P2": 0}}];
@@ -2030,59 +2030,58 @@ function renderDefResult(){
       const id = e.target.dataset.finalId;
       const newPos = e.target.value;
       const current = finalPositions[id] || '';
-      let bumpedId = null;
+      const candidate = roster.find(r=>r.id===id);
+
+      // Antes de fixar a posição simulada, o candidato precisa "vencer" a vaga
+      // se ela já estiver cheia: quem tem nota cadastrada na posição vence quem
+      // não tem; sem nota nenhuma dos dois, decide a nota geral. Sem isso, dava
+      // pra "ganhar" uma vaga só por escolher no seletor, mesmo sem preferência
+      // nem nota pra disputar com quem já está lá.
       if(newPos && newPos !== current){
-        const counts = finalPositionCounts();
-        if(counts[newPos] >= MAX_PER_POSITION){
-          const candidate = roster.find(r=>r.id===id);
-          const occupants = selected
-            .filter(sid => finalPositions[sid] === newPos)
-            .map(oid => ({ id: oid, player: roster.find(r=>r.id===oid) }));
-          const weakest = occupants.reduce((min, o) => posDuelBeats(min.player, o.player, newPos) ? o : min, occupants[0]);
-          if(weakest){
-            const others = occupants.filter(o => o.id !== weakest.id);
-            const cmp = posDuelCompare(candidate, weakest.player, newPos);
-            if(cmp === 0){
-              // Empate mesmo depois do desempate pela nota geral: ninguém leva a vaga
-              // automaticamente — a posição do mais fraco fica em branco pra decisão manual.
-              delete finalPositions[weakest.id];
-              teams.forEach(t=>{
-                POSITIONS.forEach(slot=>{ if(t[slot] === weakest.id) t[slot] = null; });
-              });
-              await saveFinalPositions();
-              await saveTeams();
-              const safeNames = joinNamesPt(others.map(o => o.player.name));
-              showToast(candidate.name + ' e ' + weakest.player.name + ' empataram em ' + newPos + ' (mesma nota e mesma geral) — ' + safeNames + ' seguem garantidos, e a vaga de ' + weakest.player.name + ' ficou em branco pra você definir manualmente');
-              e.target.value = current;
-              renderDefResult();
-              renderTeams();
-              return;
-            }
-            if(cmp > 0){
-              bumpedId = weakest.id;
-              const winnersNames = joinNamesPt([candidate.name, ...others.map(o => o.player.name)]);
-              showToast(newPos + ' fica com ' + winnersNames + ' — ' + candidate.name + ' venceu ' + weakest.player.name + ' pela nota (simulação)');
-            } else {
-              const winnersNames = joinNamesPt([...others.map(o => o.player.name), weakest.player.name]);
-              showToast(newPos + ' já está com ' + winnersNames + ' — a nota deles aí é maior, então ' + candidate.name + ' não venceria a vaga');
-              e.target.value = current;
-              return;
-            }
+        const occupantIds = selected.filter(sid => sid !== id && finalPositions[sid] === newPos);
+        if(occupantIds.length >= MAX_PER_POSITION){
+          const occupants = occupantIds.map(oid => roster.find(r=>r.id===oid)).filter(Boolean);
+          const sortedOcc = [...occupants].sort((a,b)=>posDuelCompare(a,b,newPos));
+          const weakest = sortedOcc[0];
+          if(!posDuelBeats(candidate, weakest, newPos)){
+            showToast(newPos + ' já está completo com nota igual ou maior — ' + candidate.name + ' não venceria a vaga de ' + weakest.name);
+            e.target.value = current;
+            return;
           }
         }
       }
-      if(newPos){ finalPositions[id] = newPos; } else { delete finalPositions[id]; }
-      if(bumpedId){ delete finalPositions[bumpedId]; }
-      teams.forEach(t=>{
-        POSITIONS.forEach(slot=>{
-          if(t[slot] === id && finalPositions[id] !== slot) t[slot] = null;
-          if(bumpedId && t[slot] === bumpedId) t[slot] = null;
-        });
-      });
+
+      const others = convocados.filter(p => p.id !== id);
+
+      const capacityByPos = {};
+      POSITION_OPTIONS.forEach(pos => capacityByPos[pos] = MAX_PER_POSITION);
+      if(newPos) capacityByPos[newPos] = MAX_PER_POSITION - 1;
+
+      const assignedOthers = runPositionAssignment(others, capacityByPos);
+      const assignedAll = { ...assignedOthers };
+      if(newPos) assignedAll[id] = newPos;
+      // Quem foi escolhido manualmente "Sem posição" fica de fora mesmo que
+      // sobre só um tipo de vaga — foi uma escolha explícita.
+      const excludeIds = new Set(newPos ? [] : [id]);
+      fillLoneRemainingPosition(assignedAll, convocados, excludeIds);
+
+      const before = { ...finalPositions };
+      finalPositions = assignedAll;
+      clearTeamSlotsOutOfSync();
+
       await saveFinalPositions();
       await saveTeams();
       renderDefResult();
       renderTeams();
+
+      const changedOthers = others.filter(p => (before[p.id] || '') !== (finalPositions[p.id] || ''));
+      let msg = newPos
+        ? candidate.name + ' definido em ' + newPos
+        : candidate.name + ' ficou sem posição';
+      if(changedOthers.length){
+        msg += ' — posições recalculadas automaticamente (' + changedOthers.length + ' outro' + (changedOthers.length > 1 ? 's' : '') + ' mudou' + (changedOthers.length > 1 ? 'ram' : '') + ')';
+      }
+      showToast(msg);
     });
   });
 
@@ -2123,41 +2122,28 @@ function renderDefMissingSummary(){
   box.innerHTML = 'Posições incompletas: ' + text + ' — ' + pessoasText;
 }
 
-document.getElementById('autoDefineBtn').addEventListener('click', async ()=>{
- try{
-  const convocados = roster.filter(p => selected.includes(p.id));
-  if(!convocados.length){
-    showToast('Convoque jogadores na aba Convocados primeiro');
-    return;
-  }
-
-  if(!convocados.some(p => getEffectivePositions(p.id).length)){
-    showToast('Nenhum convocado tem posição marcada em Convocados (nem provisória)');
-    return;
-  }
-  if(!(await showConfirm('Isso vai redefinir a posição de cada convocado. Cada um tenta primeiro a sua 1ª opção marcada em Convocados (quem não tem marcação usa a preferência provisória, se definida); se a posição já estiver cheia, quem tem nota cadastrada nela vence quem não tem, e no empate (ou sem nota nenhuma dos dois) decide a nota geral — quem perder a disputa tenta a próxima opção marcada, e assim por diante. As preferências marcadas em Convocados não são apagadas. Continuar?'))) return;
-
+// Disputa competitiva (tipo "aceitação diferida"): cada convocado do `pool`
+// propõe primeiro pra sua 1ª opção marcada em Convocados. Se a posição tiver
+// vaga (respeitando `capacityByPos`), ele fica. Se estiver cheia, ele disputa
+// com quem está na vaga mais fraca dali: quem tem nota cadastrada na posição
+// vence quem não tem; empatando (ou sem nota nenhuma dos dois), decide a nota
+// geral. Quem perde a disputa (seja o novo candidato, seja quem foi tirado da
+// vaga) tenta a próxima opção marcada, e assim por diante — então uma nota
+// geral maior pode vencer uma vaga mesmo vindo de uma preferência mais baixa.
+function runPositionAssignment(pool, capacityByPos){
   const byId = {};
-  convocados.forEach(p => { byId[p.id] = p; });
+  pool.forEach(p => { byId[p.id] = p; });
   const prefsById = {};
-  convocados.forEach(p => { prefsById[p.id] = getEffectivePositions(p.id); });
+  pool.forEach(p => { prefsById[p.id] = getEffectivePositions(p.id); });
   const nextIdx = {};
-  convocados.forEach(p => { nextIdx[p.id] = 0; });
+  pool.forEach(p => { nextIdx[p.id] = 0; });
 
   const holders = {};
   POSITION_OPTIONS.forEach(pos => holders[pos] = []);
 
-  // Disputa competitiva (tipo "aceitação diferida"): cada convocado propõe
-  // primeiro pra sua 1ª opção marcada em Convocados. Se a posição tiver vaga,
-  // ele fica. Se estiver cheia, ele disputa com quem está na vaga mais fraca
-  // dali: quem tem nota cadastrada na posição vence quem não tem; empatando
-  // (ou sem nota nenhuma dos dois), decide a nota geral. Quem perde a disputa
-  // (seja o novo candidato, seja quem foi tirado da vaga) tenta a próxima
-  // opção marcada, e assim por diante — então uma nota geral maior pode
-  // vencer uma vaga mesmo vindo de uma preferência mais baixa.
-  let queue = convocados.map(p => p.id);
+  let queue = pool.map(p => p.id);
   let guard = 0;
-  const maxGuard = convocados.length * (MAX_POS_PER_PERSON + 1) * 4 + 10;
+  const maxGuard = pool.length * (MAX_POS_PER_PERSON + 1) * 4 + 10;
   while(queue.length && guard < maxGuard){
     guard++;
     const pid = queue.shift();
@@ -2167,11 +2153,13 @@ document.getElementById('autoDefineBtn').addEventListener('click', async ()=>{
     const pos = prefs[idx];
     nextIdx[pid] = idx + 1;
 
+    const cap = capacityByPos[pos] !== undefined ? capacityByPos[pos] : MAX_PER_POSITION;
     const occupants = holders[pos];
-    if(occupants.length < MAX_PER_POSITION){
+    if(occupants.length < cap){
       occupants.push(pid);
       continue;
     }
+    if(occupants.length === 0){ queue.push(pid); continue; } // sem vaga nenhuma aqui (reservada)
     const sorted = [...occupants].sort((a, b) => posDuelCompare(byId[a], byId[b], pos));
     const weakestId = sorted[0];
     if(posDuelBeats(byId[pid], byId[weakestId], pos)){
@@ -2185,18 +2173,62 @@ document.getElementById('autoDefineBtn').addEventListener('click', async ()=>{
 
   const assigned = {};
   POSITION_OPTIONS.forEach(pos => holders[pos].forEach(pid => { assigned[pid] = pos; }));
+  return assigned;
+}
 
-  // Reconstrói finalPositions do zero (a "decisão"), sem tocar nas preferências
-  // brutas guardadas em `positions` (aba Convocados).
-  finalPositions = {};
-  convocados.forEach(p => { if(assigned[p.id]) finalPositions[p.id] = assigned[p.id]; });
+// Se sobrar gente sem posição e existir só UM tipo de posição com vaga aberta
+// (todas as outras já com 3/3), não faz sentido deixar alguém sem posição por
+// falta de alternativa: essa(s) vaga(s) vai(vão) pra quem sobrou (maior nota
+// geral primeiro), mesmo que não tenha marcado essa posição como preferência.
+function fillLoneRemainingPosition(assignedMap, allPlayers, excludeIds){
+  const counts = {};
+  POSITION_OPTIONS.forEach(pos => counts[pos] = 0);
+  Object.values(assignedMap).forEach(pos => { counts[pos] = (counts[pos] || 0) + 1; });
+  const openPositions = POSITION_OPTIONS.filter(pos => counts[pos] < MAX_PER_POSITION);
+  if(openPositions.length !== 1) return;
+  const pos = openPositions[0];
+  const openSlots = MAX_PER_POSITION - counts[pos];
+  if(openSlots <= 0) return;
+  const leftover = allPlayers
+    .filter(p => !assignedMap[p.id] && !excludeIds.has(p.id))
+    .sort((a, b) => b.index - a.index);
+  leftover.slice(0, openSlots).forEach(p => { assignedMap[p.id] = pos; });
+}
 
+function clearTeamSlotsOutOfSync(){
   teams.forEach(t=>{
     POSITIONS.forEach(pos=>{
       const pid = t[pos];
       if(pid && finalPositions[pid] !== pos) t[pos] = null;
     });
   });
+}
+
+document.getElementById('autoDefineBtn').addEventListener('click', async ()=>{
+ try{
+  const convocados = roster.filter(p => selected.includes(p.id));
+  if(!convocados.length){
+    showToast('Convoque jogadores na aba Convocados primeiro');
+    return;
+  }
+
+  if(!convocados.some(p => getEffectivePositions(p.id).length)){
+    showToast('Nenhum convocado tem posição marcada em Convocados (nem provisória)');
+    return;
+  }
+  if(!(await showConfirm('Isso vai redefinir a posição de cada convocado. Cada um tenta primeiro a sua 1ª opção marcada em Convocados (quem não tem marcação usa a preferência provisória, se definida); se a posição já estiver cheia, quem tem nota cadastrada nela vence quem não tem, e no empate (ou sem nota nenhuma dos dois) decide a nota geral — quem perder a disputa tenta a próxima opção marcada, e assim por diante. Se sobrar gente sem posição e restar só um tipo de vaga aberta, ela vai pra quem sobrou. As preferências marcadas em Convocados não são apagadas. Continuar?'))) return;
+
+  const capacityByPos = {};
+  POSITION_OPTIONS.forEach(pos => capacityByPos[pos] = MAX_PER_POSITION);
+  const assigned = runPositionAssignment(convocados, capacityByPos);
+  fillLoneRemainingPosition(assigned, convocados, new Set());
+
+  // Reconstrói finalPositions do zero (a "decisão"), sem tocar nas preferências
+  // brutas guardadas em `positions` (aba Convocados).
+  finalPositions = {};
+  convocados.forEach(p => { if(assigned[p.id]) finalPositions[p.id] = assigned[p.id]; });
+
+  clearTeamSlotsOutOfSync();
 
   await saveFinalPositions();
   await saveTeams();
